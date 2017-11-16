@@ -1,0 +1,15 @@
+<!-- Edit this file to change the layout of each record in the table view -->
+<!-- To disable clicking of a field, remove the <%%select%%> and <%%endselect%%> formatters around it-->
+
+<!-- If you wish to hide the table view header that contains the column titles, -->
+<!-- open the generated 'connections_view.php' file in your text editor and -->
+<!-- change the value of $x->ShowTableHeader to 0 -->
+
+		<td id="connections-timestamp-<%%VALUE(id)%%>" class="connections-timestamp "><%%SELECT%%><%%VALUE(timestamp)%%><%%ENDSELECT%%></td>
+		<td id="connections-sourceIP-<%%VALUE(id)%%>" class="connections-sourceIP "><%%SELECT%%><%%VALUE(sourceIP)%%><%%ENDSELECT%%></td>
+		<td id="connections-adminkey-<%%VALUE(id)%%>" class="connections-adminkey "><%%SELECT%%><%%VALUE(adminkey)%%><%%ENDSELECT%%></td>
+		<td id="connections-targetPort-<%%VALUE(id)%%>" class="connections-targetPort "><%%SELECT%%><%%VALUE(targetPort)%%><%%ENDSELECT%%></td>
+		<td id="connections-exitStatus-<%%VALUE(id)%%>" class="connections-exitStatus "><%%SELECT%%><%%VALUE(exitStatus)%%><%%ENDSELECT%%></td>
+		<td id="connections-startTime-<%%VALUE(id)%%>" class="connections-startTime "><%%SELECT%%><%%VALUE(startTime)%%><%%ENDSELECT%%></td>
+		<td id="connections-endTime-<%%VALUE(id)%%>" class="connections-endTime "><%%SELECT%%><%%VALUE(endTime)%%><%%ENDSELECT%%></td>
+		<td id="connections-notes-<%%VALUE(id)%%>" class="connections-notes "><%%VALUE(notes)%%></td>

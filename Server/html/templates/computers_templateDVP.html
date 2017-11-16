@@ -1,0 +1,112 @@
+<!-- Edit this file to change the layout of the detail view print preview page -->
+
+
+<div class="panel-heading"><h3 class="panel-title">
+	<strong><%%DETAIL_VIEW_TITLE%%></strong>
+	<div class="hidden-print pull-right">
+		<button type="button" id="print" onclick="window.print();" title="<%%TRANSLATION(Print)%%>" class="btn btn-success"><i class="glyphicon glyphicon-print"></i></button>
+		<button type="submit" id="back" title="<%%TRANSLATION(Back)%%>" class="btn btn-warning"><i class="glyphicon glyphicon-remove"></i></button>
+	</div>
+	<div class="clearfix"></div>
+</h3></div>
+
+<div class="panel-body">
+	<fieldset class="form-horizontal">
+		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">BlueSky ID</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(blueskyid)%%></div>
+			</div>
+		</div>
+		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Serial Number</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(serialnum)%%></div>
+			</div>
+		</div>
+		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Name</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(hostname)%%></div>
+			</div>
+		</div>
+		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">SSH</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><a id="sshlink-link" href="link.php?t=computers&f=sshlink&i=<%%VALUE(id)%%>" target="_blank"><i class="glyphicon glyphicon-globe" title="<%%VALUE(sshlink)%%>" style="font-size: x-large;"></i></a><script>jQuery(function(){ var e_sshlink = '<%%VALUE(sshlink)%%>'; if(e_sshlink == '' || e_sshlink == '&nbsp;' || e_sshlink == 'blank.gif') jQuery('#sshlink-link').hide(); });</script></div>
+			</div>
+		</div>
+		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">VNC</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><a id="vnclink-link" href="link.php?t=computers&f=vnclink&i=<%%VALUE(id)%%>" target="_blank"><i class="glyphicon glyphicon-globe" title="<%%VALUE(vnclink)%%>" style="font-size: x-large;"></i></a><script>jQuery(function(){ var e_vnclink = '<%%VALUE(vnclink)%%>'; if(e_vnclink == '' || e_vnclink == '&nbsp;' || e_vnclink == 'blank.gif') jQuery('#vnclink-link').hide(); });</script></div>
+			</div>
+		</div>
+		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">SCP</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><a id="scplink-link" href="link.php?t=computers&f=scplink&i=<%%VALUE(id)%%>" target="_blank"><i class="glyphicon glyphicon-globe" title="<%%VALUE(scplink)%%>" style="font-size: x-large;"></i></a><script>jQuery(function(){ var e_scplink = '<%%VALUE(scplink)%%>'; if(e_scplink == '' || e_scplink == '&nbsp;' || e_scplink == 'blank.gif') jQuery('#scplink-link').hide(); });</script></div>
+			</div>
+		</div>
+		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">UserName</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(username)%%></div>
+			</div>
+		</div>
+		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Sharing Name</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(sharingname)%%></div>
+			</div>
+		</div>
+		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Last Check In</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(datetime)%%></div>
+			</div>
+		</div>
+		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Status</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(status)%%></div>
+			</div>
+		</div>
+		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Registration Time</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(registered)%%></div>
+			</div>
+		</div>
+		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Notify</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><input type="checkbox" name="notify" id="notify" value="1" <%%CHECKED(notify)%%> readonly></div>
+			</div>
+		</div>
+		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Alert</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><input type="checkbox" name="alert" id="alert" value="1" <%%CHECKED(alert)%%> readonly></div>
+			</div>
+		</div>
+		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Email Address to Notify</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(email)%%></div>
+			</div>
+		</div>
+		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Notes</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(notes)%%></div>
+			</div>
+		</div>
+		<div class="form-group" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Remove BlueSky (Cannot Undo From Here)</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><input type="checkbox" name="selfdestruct" id="selfdestruct" value="1" <%%CHECKED(selfdestruct)%%> readonly></div>
+			</div>
+		</div>
+	</fieldset>
+</div>

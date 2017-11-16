@@ -1,0 +1,20 @@
+<!-- Edit this file to change the layout of each record in the table view -->
+<!-- To disable clicking of a field, remove the <%%select%%> and <%%endselect%%> formatters around it-->
+
+<!-- If you wish to hide the table view header that contains the column titles, -->
+<!-- open the generated 'computers_view.php' file in your text editor and -->
+<!-- change the value of $x->ShowTableHeader to 0 -->
+
+		<td id="computers-blueskyid-<%%VALUE(id)%%>" class="computers-blueskyid text-right"><%%SELECT%%><%%VALUE(blueskyid)%%><%%ENDSELECT%%></td>
+		<td id="computers-serialnum-<%%VALUE(id)%%>" class="computers-serialnum "><%%VALUE(serialnum)%%></td>
+		<td id="computers-hostname-<%%VALUE(id)%%>" class="computers-hostname "><%%VALUE(hostname)%%></td>
+		<td id="computers-sshlink-<%%VALUE(id)%%>" class="computers-sshlink "><a href="link.php?t=computers&f=sshlink&i=<%%VALUE(id)%%>" title="<%%VALUE(sshlink)%%>" class="btn btn-default"><i class="glyphicon glyphicon-globe text-info"></i></a></td>
+		<td id="computers-vnclink-<%%VALUE(id)%%>" class="computers-vnclink "><a href="link.php?t=computers&f=vnclink&i=<%%VALUE(id)%%>" title="<%%VALUE(vnclink)%%>" class="btn btn-default"><i class="glyphicon glyphicon-globe text-info"></i></a></td>
+		<td id="computers-scplink-<%%VALUE(id)%%>" class="computers-scplink "><a href="link.php?t=computers&f=scplink&i=<%%VALUE(id)%%>" title="<%%VALUE(scplink)%%>" class="btn btn-default"><i class="glyphicon glyphicon-globe text-info"></i></a></td>
+		<td id="computers-datetime-<%%VALUE(id)%%>" class="computers-datetime "><%%SELECT%%><%%VALUE(datetime)%%><%%ENDSELECT%%></td>
+		<td id="computers-status-<%%VALUE(id)%%>" class="computers-status "><%%VALUE(status)%%></td>
+		<td id="computers-notify-<%%VALUE(id)%%>" class="computers-notify text-right"><%%VALUE(notify)%%></td>
+		<td id="computers-alert-<%%VALUE(id)%%>" class="computers-alert text-right"><%%VALUE(alert)%%></td>
+		<script>jQuery(function(){ var e_sshlink='<%%VALUE(sshlink)%%>'; if(e_sshlink=='' || e_sshlink=='&nbsp;') jQuery('#computers-sshlink-<%%VALUE(id)%%>').html(''); });</script>
+		<script>jQuery(function(){ var e_vnclink='<%%VALUE(vnclink)%%>'; if(e_vnclink=='' || e_vnclink=='&nbsp;') jQuery('#computers-vnclink-<%%VALUE(id)%%>').html(''); });</script>
+		<script>jQuery(function(){ var e_scplink='<%%VALUE(scplink)%%>'; if(e_scplink=='' || e_scplink=='&nbsp;') jQuery('#computers-scplink-<%%VALUE(id)%%>').html(''); });</script>

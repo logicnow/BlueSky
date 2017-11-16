@@ -1,0 +1,14 @@
+<!-- Edit this file to change the layout of the highlighted record in the table view -->
+		<td id="computers-blueskyid-<%%VALUE(id)%%>" class="text-right"><%%VALUE(blueskyid)%%></td>
+		<td id="computers-serialnum-<%%VALUE(id)%%>" class=""><%%VALUE(serialnum)%%></td>
+		<td id="computers-hostname-<%%VALUE(id)%%>" class=""><%%VALUE(hostname)%%></td>
+		<td id="computers-sshlink-<%%VALUE(id)%%>" class=""><a href="link.php?t=computers&f=sshlink&i=<%%VALUE(id)%%>" target="_blank" title="<%%VALUE(sshlink)%%>" class="btn btn-default"><i class="glyphicon glyphicon-globe text-info"></i></a></td>
+		<td id="computers-vnclink-<%%VALUE(id)%%>" class=""><a href="link.php?t=computers&f=vnclink&i=<%%VALUE(id)%%>" target="_blank" title="<%%VALUE(vnclink)%%>" class="btn btn-default"><i class="glyphicon glyphicon-globe text-info"></i></a></td>
+		<td id="computers-scplink-<%%VALUE(id)%%>" class=""><a href="link.php?t=computers&f=scplink&i=<%%VALUE(id)%%>" target="_blank" title="<%%VALUE(scplink)%%>" class="btn btn-default"><i class="glyphicon glyphicon-globe text-info"></i></a></td>
+		<td id="computers-datetime-<%%VALUE(id)%%>" class=""><%%VALUE(datetime)%%></td>
+		<td id="computers-status-<%%VALUE(id)%%>" class=""><%%VALUE(status)%%></td>
+		<td id="computers-notify-<%%VALUE(id)%%>" class="text-right"><%%VALUE(notify)%%></td>
+		<td id="computers-alert-<%%VALUE(id)%%>" class="text-right"><%%VALUE(alert)%%></td>
+		<script>jQuery(function(){ var e_sshlink = '<%%VALUE(sshlink)%%>'; if(e_sshlink == '' || e_sshlink == '&nbsp;') jQuery('#computers-sshlink-<%%VALUE(id)%%>').html(''); });</script>
+		<script>jQuery(function(){ var e_vnclink = '<%%VALUE(vnclink)%%>'; if(e_vnclink == '' || e_vnclink == '&nbsp;') jQuery('#computers-vnclink-<%%VALUE(id)%%>').html(''); });</script>
+		<script>jQuery(function(){ var e_scplink = '<%%VALUE(scplink)%%>'; if(e_scplink == '' || e_scplink == '&nbsp;') jQuery('#computers-scplink-<%%VALUE(id)%%>').html(''); });</script>
