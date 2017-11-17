@@ -185,7 +185,7 @@ $myCmd "$myQry"
 
 ## fail2ban conf
 sed -i "s/SERVERFQDN/$serverFQDN/g" /usr/local/bin/sendEmail-whois-lines.conf
-cp /usr/local/bin/sendmail-whois-lines.conf /etc/fail2ban/action.d/sendEmail-whois-lines.conf
+cp /usr/local/bin/sendEmail-whois-lines.conf /etc/fail2ban/action.d/sendEmail-whois-lines.conf
 sed -i "s/EMAILADDRESS/$emailAlertAddress/g" /usr/local/bin/jail.local
 cp /usr/local/bin/jail.local /etc/fail2ban
 service fail2ban start
