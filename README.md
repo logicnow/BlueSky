@@ -1,5 +1,5 @@
 # BlueSky
-NOTE: SolarWinds does not provide technical support for BlueSky.
+**NOTE: SolarWinds does not provide technical support for BlueSky.**
 
 BlueSky establishes and maintains an SSH tunnel initiated by your client’s computer to a BlueSky server. That server is hosted by you.
 
