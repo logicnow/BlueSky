@@ -109,5 +109,11 @@
 	}
 	function computers_batch_actions(&$args){
 
-		return array();
+		return array(
+			array(
+				'title' => 'Mark For Removal',
+				'function' => 'mark_removal',
+				'icon' => 'th-list'
+			)
+		);
 	}
