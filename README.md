@@ -1,9 +1,7 @@
 # BlueSky
 **NOTE: SolarWinds does not provide technical support for BlueSky.**
 
-BlueSky establishes and maintains an SSH tunnel initiated by your client’s computer to a BlueSky server. That server is hosted by you.
-
-The tunnel allows two connections to come back to the computer from the server: SSH and VNC. The SSH and VNC services on the computer are the ones provided by the Sharing.prefpane.
+BlueSky establishes and maintains an SSH tunnel initiated by your client’s computer to a BlueSky server. The tunnel allows two connections to come back to the computer from the server: SSH and VNC. The SSH and VNC services on the computer are the ones provided by the Sharing.prefpane.
 
 You use an Admin app to connect via SSH to the BlueSky server and then follow the tunnel back to your client computer. You select which computer by referencing its BlueSky ID as shown in the web admin.
 
