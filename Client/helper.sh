@@ -159,7 +159,7 @@ if [ ${weLaunched:-0} -lt 2 ]; then
 		cp /var/bluesky/com.solarwindsmsp.bluesky.plist /Library/LaunchDaemons/com.solarwindsmsp.bluesky.plist
 	fi
 	if [ ! -e /Library/LaunchDaemons/com.solarwindsmsp.bluesky.helper.plist ]; then
-		cp /var/bluesky/com.solarwindsmsp.bluesky.plist /Library/LaunchDaemons/com.solarwindsmsp.bluesky.helper.plist
+		cp /var/bluesky/com.solarwindsmsp.bluesky.helper.plist /Library/LaunchDaemons/com.solarwindsmsp.bluesky.helper.plist
 	fi
 	chmod 644 /Library/LaunchDaemons/com.solarwindsmsp.bluesky.*
 	chown root:wheel /Library/LaunchDaemons/com.solarwindsmsp.bluesky.*
