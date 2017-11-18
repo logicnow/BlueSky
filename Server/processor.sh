@@ -53,7 +53,7 @@ myQry="select id from computers where serialnum='$serialNum'"
 compRec=`$myCmd "$myQry"`
 
 #get the default bluesky user name
-loginName=`cat /usr/local/bin/defaultLogin.txt 2> /dev/null`
+loginName=`cat /usr/local/bin/BlueSky/Server/defaultLogin.txt 2> /dev/null`
 
 if [ "$compRec" == "" ]; then
 
@@ -109,7 +109,7 @@ if [ "$myUser" != "" ] && [ "$myUser" != "NULL" ]; then
   echo "$myUser"
 else
   # TODO: put default login in global table
-  myUser=`cat /usr/local/bin/defaultLogin.txt`
+  myUser=`cat /usr/local/bin/BlueSky/Server/defaultLogin.txt`
   if [ "$myUser" != "" ]; then
     echo "$myUser"
   fi
@@ -137,7 +137,7 @@ fi
 myQry="select blueskyid from computers where serialnum='$serialNum'"
 myPort=`$myCmd "$myQry"`
 sshPort=$((22000 + myPort))
-testConn=`ssh -p $sshPort -o StrictHostKeyChecking=no -l bluesky -i /usr/local/bin/blueskyd localhost "/usr/bin/defaults read /var/bluesky/settings serial"`
+testConn=`ssh -p $sshPort -o StrictHostKeyChecking=no -l bluesky -i /usr/local/bin/BlueSky/Server/blueskyd localhost "/usr/bin/defaults read /var/bluesky/settings serial"`
 testExit=$?
 if [ $testExit -eq 0 ]; then
   if [ "$testConn" == "$serialNum" ]; then
@@ -158,7 +158,8 @@ if [ "$notifyMe" == "1" ]; then
 	myQry="select email from computers where serialnum='$serialNum'"
 	emailAddr=`$myCmd "$myQry"`
 	if [ "$emailAddr" == "" ] || [ "$emailAddr" == "NULL" ]; then
-		emailAddr=`cat /usr/local/bin/emailAddr.txt`
+		myQry="select defaultemail from computers"
+		emailAddr=`$myCmd "$myQry"`
 	fi
 	myQry="select hostname from computers where serialnum='$serialNum'"
 	hostName=`$myCmd "$myQry"`
@@ -168,9 +169,9 @@ if [ "$notifyMe" == "1" ]; then
 	myUser=`$myCmd "$myQry"`
 
 	if [ -e /usr/local/bin/emailHelper.sh ]; then
+		serverFQDN=`cat /usr/local/bin/BlueSky/Server/server.txt`
 		/usr/local/bin/emailHelper.sh "BlueSky Notification $serialNum" "You requested to be notified when we next saw $hostName with serial number $serialNum, ID: $myPort.
-Status: $currStat
-https://`hostname`/blu=$myPort
+https://$serverFQDN/blu=$myPort
 SSH bluesky://com.solarwindsmsp.bluesky.admin?blueSkyID=$myPort&user=$myUser&action=ssh
 VNC bluesky://com.solarwindsmsp.bluesky.admin?blueSkyID=$myPort&user=$myUser&action=vnc
 SCP bluesky://com.solarwindsmsp.bluesky.admin?blueSkyID=$myPort&user=$myUser&action=scp"

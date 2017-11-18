@@ -22,10 +22,10 @@ fileLoc=`ls /home/admin/newkeys/$1 2>/dev/null`
 
 if [ "$fileLoc" != "" ]; then
 	targetLoc="admin"
-	prefixCode="command=\"/usr/local/bin/$targetLoc-wrapper.sh\""
+	prefixCode="command=\"/usr/local/bin/BlueSky/Server/$targetLoc-wrapper.sh\""
 else
 	targetLoc="bluesky"
-	prefixCode="command=\"/usr/local/bin/$targetLoc-wrapper.sh\",no-X11-forwarding,no-agent-forwarding,no-pty"
+	prefixCode="command=\"/usr/local/bin/BlueSky/Server/$targetLoc-wrapper.sh\",no-X11-forwarding,no-agent-forwarding,no-pty"
 fi
 
 pubKey=`cat "/home/$targetLoc/newkeys/$tmpFile"`

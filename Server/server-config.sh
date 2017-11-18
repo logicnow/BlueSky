@@ -70,19 +70,23 @@ fi
 mysqlCollectorPass=`tr -dc A-Za-z0-9 < /dev/urandom | head -c 48 | xargs`
 
 ## double-check permissions on uploaded BlueSky files
-chown -R root:root /usr/local/bin
-chmod 755 /usr/local/bin
-chown www-data /usr/local/bin/keymaster.sh
-chown www-data /usr/local/bin/processor.sh
-chmod 755 /usr/local/bin/*.sh
+chown -R root:root /usr/local/bin/BlueSky/Server
+chmod 755 /usr/local/bin/BlueSky/Server
+chown www-data /usr/local/bin/BlueSky/Server/keymaster.sh
+chown www-data /usr/local/bin/BlueSky/Server/processor.sh
+chmod 755 /usr/local/bin/BlueSky/Server/*.sh
+
+## write server FQDN to a file for easy reference in case hostname changes
+echo "$serverFQDN" > /usr/local/bin/BlueSky/Server/server.txt
+echo "$serverFQDN" > /usr/local/bin/BlueSky/Admin\ Tools/server.txt
 
 ## reconfigure sshd_config to meet our specifications
 sed -i 's/Port 22/Port 22\nPort 3122/g' /etc/ssh/sshd_config
 echo 'Ciphers chacha20-poly1305@openssh.com,aes128-ctr,aes192-ctr,aes256-ctr,arcfour256,arcfour128,arcfour' >> /etc/ssh/sshd_config
 echo 'MACs hmac-sha2-512,hmac-sha1,hmac-ripemd160' >> /etc/ssh/sshd_config
-sed -i '^HostKey /etc/ssh/ssh_host_dsa_key^d' /etc/ssh/sshd_config
-sed -i '^HostKey /etc/ssh/ssh_host_rsa_key^d' /etc/ssh/sshd_config
-sed -i '^HostKey /etc/ssh/ssh_host_ed25519_key^d' /etc/ssh/sshd_config
+sed -i '/HostKey \/etc\/ssh\/ssh_host_dsa_key/d' /etc/ssh/sshd_config
+sed -i '/HostKey \/etc\/ssh\/ssh_host_rsa_key/d' /etc/ssh/sshd_config
+sed -i '/HostKey \/etc\/ssh\/ssh_host_ed25519_key/d' /etc/ssh/sshd_config
 service sshd restart
 
 ## setup local firewall
@@ -98,16 +102,17 @@ sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again p
 apt-get -y install apache2 fail2ban mysql-server php-mysql php libapache2-mod-php php-mcrypt php-mysql inoticoming swaks
 
 ## setup user accounts/folders
+groupadd admin 2> /dev/null # will already be there on DO
 useradd -m -g admin admin
 useradd -m bluesky
 passwd -d admin
 passwd -d bluesky
 usermod -s /bin/bash admin
 usermod -s /bin/bash bluesky
-mkdir /home/admin/.ssh
-mkdir /home/bluesky/.ssh
-mkdir /home/admin/newkeys
-mkdir /home/bluesky/newkeys
+mkdir -p /home/admin/.ssh
+mkdir -p /home/bluesky/.ssh
+mkdir -p /home/admin/newkeys
+mkdir -p /home/bluesky/newkeys
 chown www-data /home/admin/newkeys
 chown www-data /home/bluesky/newkeys
 chown -R admin /home/admin/.ssh
@@ -141,18 +146,18 @@ service apache2 restart
 
 ## move web site to /var/www/html
 mv /var/www/html /var/www/html.old
-mv /usr/local/bin/html /var/www/html
+ln -s /usr/local/bin/BlueSky/Server/html /var/www/html
 chown -R www-data /var/www/html
 
 ## configure cron jobs
-echo "@reboot /usr/local/bin/startGozer.sh" > /tmp/mycron
-echo "*/30 * * * *  /usr/local/bin/purgeTemp.sh" >> /tmp/mycron
-echo "*/5 * * * * /usr/local/bin/serverup.sh" >> /tmp/mycron
+echo "@reboot /usr/local/bin/BlueSky/Server/startGozer.sh" > /tmp/mycron
+echo "*/30 * * * *  /usr/local/bin/BlueSky/Server/purgeTemp.sh" >> /tmp/mycron
+echo "*/5 * * * * /usr/local/bin/BlueSky/Server/serverup.sh" >> /tmp/mycron
 crontab /tmp/mycron
-/usr/local/bin/startGozer.sh
+/usr/local/bin/BlueSky/Server/startGozer.sh
 
 ## setup collector.php
-mv /usr/local/bin/collector.php /usr/lib/cgi-bin/collector.php
+ln -s /usr/local/bin/BlueSky/Server/collector.php /usr/lib/cgi-bin/collector.php
 chown www-data /usr/lib/cgi-bin/collector.php 
 chmod 700 /usr/lib/cgi-bin/collector.php 
 sed -i "s/CHANGETHIS/$mysqlCollectorPass/g" /usr/lib/cgi-bin/collector.php
@@ -167,7 +172,7 @@ chmod 640 /var/local/my.cnf
 
 # setup database
 /usr/bin/mysql --defaults-file=/var/local/my.cnf -N -B -e 'create database BlueSky;'
-/usr/bin/mysql --defaults-file=/var/local/my.cnf BlueSky < /usr/local/bin/myBlueSQL.sql 
+/usr/bin/mysql --defaults-file=/var/local/my.cnf BlueSky < /usr/local/bin/BlueSky/Server/myBlueSQL.sql 
 myCmd="/usr/bin/mysql --defaults-file=/var/local/my.cnf BlueSky -N -B -e"
 
 ## setup credentials in /var/www/html/config.php
@@ -184,10 +189,10 @@ myQry="grant select on BlueSky.computers to 'collector'@'localhost';"
 $myCmd "$myQry"
 
 ## fail2ban conf
-sed -i "s/SERVERFQDN/$serverFQDN/g" /usr/local/bin/sendEmail-whois-lines.conf
-cp /usr/local/bin/sendEmail-whois-lines.conf /etc/fail2ban/action.d/sendEmail-whois-lines.conf
-sed -i "s/EMAILADDRESS/$emailAlertAddress/g" /usr/local/bin/jail.local
-cp /usr/local/bin/jail.local /etc/fail2ban
+sed -i "s/SERVERFQDN/$serverFQDN/g" /usr/local/bin/BlueSky/Server/sendEmail-whois-lines.conf
+cp /usr/local/bin/BlueSky/Server/sendEmail-whois-lines.conf /etc/fail2ban/action.d/sendEmail-whois-lines.conf
+sed -i "s/EMAILADDRESS/$emailAlertAddress/g" /usr/local/bin/BlueSky/Server/jail.local
+cp /usr/local/bin/BlueSky/Server/jail.local /etc/fail2ban
 service fail2ban start
 
 ## add emailAlertAddress to mysql for alerting
@@ -195,14 +200,14 @@ myQry="update global set defaultemail='$emailAlertAddress'"
 $myCmd "$myQry"
 
 ## update emailHelper-dist.  You still need to enable it.
-sed -i "s/EMAILADDRESS/$emailAlertAddress/g" /usr/local/bin/emailHelper-dist.sh
+sed -i "s/EMAILADDRESS/$emailAlertAddress/g" /usr/local/bin/BlueSky/Server/emailHelper-dist.sh
 
 ## Run setup for client files
-/usr/local/bin/client-config.sh
+/usr/local/bin/BlueSky/Server/client-config.sh
 
 ## That's all folks!
 echo "All set.  Please be sure to generate a CSR and/or install a verifiable SSL certificate"
 echo "in Apache by editing SSL paths in /etc/apache2/sites-enabled/default-ssl.conf"
 echo "BlueSky will not connect to servers with self-signed or invalid certificates."
-echo "And configure /usr/local/bin/emailHelper.sh with your preferred SMTP setup."
+echo "And configure /usr/local/bin/BlueSky/Server/emailHelper.sh with your preferred SMTP setup."
 exit 0

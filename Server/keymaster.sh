@@ -23,9 +23,9 @@ dataUp="$1"
 tmpName=`uuidgen`
 
 # decrypt. if admin fails, try client. if both fail, reject it.  Whichever one passes, note the type.
-echo "$dataUp" | openssl smime -decrypt -inform PEM -inkey /usr/local/bin/blueskyclient.key -out /tmp/$tmpName.pub
+echo "$dataUp" | openssl smime -decrypt -inform PEM -inkey /usr/local/bin/BlueSky/Server/blueskyclient.key -out /tmp/$tmpName.pub
 if [ $? -ne 0 ]; then
-	echo "$dataUp" | openssl smime -decrypt -inform PEM -inkey /usr/local/bin/blueskyadmin.key -out /tmp/$tmpName.pub
+	echo "$dataUp" | openssl smime -decrypt -inform PEM -inkey /usr/local/bin/BlueSky/Server/blueskyadmin.key -out /tmp/$tmpName.pub
 	if [ $? -ne 0 ]; then
 		echo "Invalid"
 		exit 0
@@ -45,10 +45,10 @@ fingerPrint=`echo "$keyValid" | awk '{ print $2 }' | cut -d : -f 2`
 if [[ "$keyValid" == *"ECDSA"* ]]; then
   mv /tmp/$tmpName.pub /home/$targetLoc/newkeys/$tmpName.pub
   echo "Installed"
-  if [ "$targetLoc" == "admin" ] && [ -e /usr/local/bin/emailHelper.sh ]; then
+  if [ "$targetLoc" == "admin" ] && [ -e /usr/local/bin/BlueSky/Server/emailHelper.sh ]; then
     #email the subscriber about it
     keyID=`echo "$pubKey" | awk '{ print $NF }'`
-    /usr/local/bin/emailHelper.sh "BlueSky Admin Key Registered" "A new admin key with identifier $keyID was registered in your server. If you did not expect this, please invoke Emergency Stop."
+    /usr/local/bin/BlueSky/Server/emailHelper.sh "BlueSky Admin Key Registered" "A new admin key with identifier $keyID was registered in your server. If you did not expect this, please invoke Emergency Stop."
   fi
 else
 #  rm -f /tmp/$tmpName.pub
