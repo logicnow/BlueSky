@@ -43,13 +43,13 @@ if [ "$webAdminPassword" == "" ]; then
 		echo "This value cannot be empty. Please try again."
 		exit 2
 	fi
-fi
 	echo "Please enter the password again."
 	read webPassConf
 	if [ "$webAdminPassword" != "$webPassConf" ]; then
 		echo "Sorry the passwords don't match. Please try again."
 		exit 2
 	fi
+fi
 if [ "$emailAlertAddress" == "" ]; then
 	echo "Please enter an email address where you will receive alerts."
 	read emailAlertAddress
