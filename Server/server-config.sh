@@ -147,7 +147,7 @@ service apache2 restart
 ## move web site to /var/www/html
 mv /var/www/html /var/www/html.old
 ln -s /usr/local/bin/BlueSky/Server/html /var/www/html
-chown -R www-data /var/www/html
+chown -R www-data /usr/local/bin/BlueSky/Server/html
 
 ## configure cron jobs
 echo "@reboot /usr/local/bin/BlueSky/Server/startGozer.sh" > /tmp/mycron
@@ -158,8 +158,8 @@ crontab /tmp/mycron
 
 ## setup collector.php
 ln -s /usr/local/bin/BlueSky/Server/collector.php /usr/lib/cgi-bin/collector.php
-chown www-data /usr/lib/cgi-bin/collector.php 
-chmod 700 /usr/lib/cgi-bin/collector.php 
+chown www-data /usr/local/bin/BlueSky/Server/collector.php 
+chmod 700 /usr/local/bin/BlueSky/Server/collector.php 
 sed -i "s/CHANGETHIS/$mysqlCollectorPass/g" /usr/lib/cgi-bin/collector.php
 
 ## setup my.cnf

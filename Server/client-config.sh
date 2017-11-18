@@ -41,7 +41,7 @@ fi
 
 if [ "$reKey" != "--client" ]; then
 	# make blueskyadmin pair - used for encrypting uploaded SSH keys to the server for admins
-	openssl req -x509 -nodes -days 100000 -newkey rsa:2048 -keyout /usr/local/bin/BlueSky/Server/blueskyadmin.key -out /usr/local/bin/BlueSky/Client/blueskyadmin.pub -subj '/'
+	openssl req -x509 -nodes -days 100000 -newkey rsa:2048 -keyout /usr/local/bin/BlueSky/Server/blueskyadmin.key -out /usr/local/bin/BlueSky/Admin\ Tools/blueskyadmin.pub -subj '/'
 fi
 
 # only do these if reKey is not set and the blueskyd file is not present
