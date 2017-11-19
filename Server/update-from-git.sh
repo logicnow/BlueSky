@@ -24,7 +24,7 @@
 serverFQDN=`cat /usr/local/bin/BlueSky/Server/server.txt`
 mysqlRootPass=`grep password /var/local/my.cnf | awk '{ print $NF }'`
 ## TODO test this
-mysqlCollectorPass=`grep localhost /usr/lib/cgi-bin/collector.php | head -n 1 | awk '{ print $6 }' | tr -d ,\'`
+mysqlCollectorPass=`grep localhost /usr/lib/cgi-bin/collector.php | head -n 1 | awk '{ print $5 }' | tr -d ,\'`
 
 ## error for blank variables
 if [ "$serverFQDN" == "" ]; then
@@ -37,7 +37,9 @@ if [ "$mysqlRootPass" == "" ]; then
 fi
 
 # do the pull
-cd /usr/local/bin/BlueSky && git pull
+cd /usr/local/bin/BlueSky
+git fetch
+git reset --hard origin/master
 
 myCmd="/usr/bin/mysql --defaults-file=/var/local/my.cnf BlueSky -N -B -e"
 
