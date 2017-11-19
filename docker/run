@@ -1,0 +1,5 @@
+#!/bin/bash
+
+/usr/local/bin/BlueSky/Server/server-config.sh
+
+exec supervisord -n -c /etc/supervisor/conf.d/supervisord.conf

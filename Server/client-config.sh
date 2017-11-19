@@ -21,10 +21,14 @@
 # reads option to only do one set of keys or the other
 reKey="$1"
 mkdir -p /usr/local/bin/BlueSky/Client/.ssh 2> /dev/null
-hostName=`grep ServerName /etc/apache2/sites-enabled/default-ssl.conf | awk '{ print $NF }'`
-if [ "$hostName" == "" ]; then
-	echo "Server FQDN is not readable from apache. Please double check your server setup."
-	exit 2
+if [[ -z "${SERVERFQDN}" ]]; then
+	hostName=`grep ServerName /etc/apache2/sites-enabled/000-default.conf | awk '{ print $NF }'`
+	if [ "$hostName" == "" ]; then
+		echo "Server FQDN is not readable from apache. Please double check your server setup."
+		exit 2
+	fi
+else
+	hostName=$SERVERFQDN
 fi
 
 # safety check if these files are there
