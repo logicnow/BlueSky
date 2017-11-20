@@ -22,7 +22,7 @@
 # Set this to a different location if you'd prefer it live somewhere else
 ourHome="/var/bluesky"
 
-bVer="2.0"
+bVer="2.1"
 
 # planting a debug flag runs bash in -x so you get all the output
 if [ -e "$ourHome/.debug" ]; then
@@ -121,16 +121,16 @@ function startMeUp {
   else
     logMe "SSH port is set to $altPort per settings"
   fi
-  # is this 10.6 which doesn't support UseRoaming or 10.12 which doesn't need the flag?
-  osRaw=`sw_vers -productVersion`
-  osVersion=`echo "$osRaw" | awk -F . '{ print $2 }'`
+  # is this 10.6 which doesn't support UseRoaming or 10.12+ which doesn't need the flag?
   if [ "$osVersion" != "6" ] && [ ${osVersion:-0} -lt 12 ]; then
     noRoam="-o UseRoaming=no"
   fi
+  ## main command right here
   $ourHome/autossh -M $monport -f \
-  -c chacha20-poly1305@openssh.com -m hmac-sha2-512 \
+  -c $prefCipher -m $msgAuth \
+  $kexAlg \
+  -o HostKeyAlgorithms=$keyAlg \
   -nNT -R $sshport:localhost:$altPort -R $vncport:localhost:5900 -p 3122 \
-  -o HostKeyAlgorithms=ecdsa-sha2-nistp256 \
   $noRoam \
   -i "$ourHome/.ssh/bluesky_client" bluesky@$blueskyServer
   #echo "$!" > "$ourHome/autossh.pid"
@@ -170,7 +170,7 @@ function reKey {
   # make unique ssh key pair
   rm -f "$ourHome/.ssh/bluesky_client"
   rm -f "$ourHome/.ssh/bluesky_client.pub"
-  ssh-keygen -q -t ecdsa-sha2-nistp256 -N "" -f "$ourHome/.ssh/bluesky_client" -C "$serialNum"
+  ssh-keygen -q -t $keyAlg -N "" -f "$ourHome/.ssh/bluesky_client" -C "$serialNum"
   pubKey=`cat "$ourHome/.ssh/bluesky_client.pub"`
   if [ "$pubKey" == "" ]; then
     logMe "ERROR - reKey failed and we are broken. Please reinstall."
@@ -280,8 +280,27 @@ if [ "$blueskyServer" == "" ]; then
   exit 1
 fi
 
+# get the version of the OS so we can ensure compatiblity
+osRaw=`sw_vers -productVersion`
+osVersion=`echo "$osRaw" | awk -F . '{ print $2 }'`
+
+# select all of our algorithms - treating OS X 10.10 and below as insecure, defaulting to secure
+if [ ${osVersion:-0} -lt 11 ] && [ ${osVersion:-0} -ne 0 ]; then
+  keyAlg="ssh-rsa"
+  serverKey="serverkeyrsa"
+  prefCipher="aes256-ctr"
+  kexAlg=""
+  msgAuth="hmac-ripemd160"
+else
+  keyAlg="ssh-ed25519"
+  serverKey="serverkey"
+  prefCipher="chacha20-poly1305@openssh.com"
+  kexAlg="-o KexAlgorithms=curve25519-sha256@libssh.org"
+  msgAuth="hmac-sha2-512-etm@openssh.com"
+fi
+
 # server key will be pre-populated in the installer - put it into known hosts
-serverKey=`/usr/libexec/PlistBuddy -c "Print :serverkey" "$ourHome/server.plist"  2> /dev/null`
+serverKey=`/usr/libexec/PlistBuddy -c "Print :$serverKey" "$ourHome/server.plist"  2> /dev/null`
 if [ "$serverKey" == "" ]; then
   logMe "ERROR: cant get server key - please reinstall"
   exit 1

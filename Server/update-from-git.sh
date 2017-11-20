@@ -55,6 +55,7 @@ if [ "$mysqlCollectorPass" == "" ]; then
   myQry="grant select on BlueSky.computers to 'collector'@'localhost';"
   $myCmd "$myQry"
 fi
+sed -i "s/CHANGETHIS/$mysqlCollectorPass/g" /usr/lib/cgi-bin/collector.php
 
 ## double-check permissions on uploaded BlueSky files
 chown -R root:root /usr/local/bin/BlueSky/Server
@@ -62,11 +63,69 @@ chmod 755 /usr/local/bin/BlueSky/Server
 chown www-data /usr/local/bin/BlueSky/Server/keymaster.sh
 chown www-data /usr/local/bin/BlueSky/Server/processor.sh
 chmod 755 /usr/local/bin/BlueSky/Server/*.sh
-
 chown -R www-data /usr/local/bin/BlueSky/Server/html
 chown www-data /usr/local/bin/BlueSky/Server/collector.php 
 chmod 700 /usr/local/bin/BlueSky/Server/collector.php 
-sed -i "s/CHANGETHIS/$mysqlCollectorPass/g" /usr/lib/cgi-bin/collector.php
+chown www-data /usr/local/bin/BlueSky/Server/blueskyd
+
+## change the keys for 2.1
+# this can be removed in future versions, it's only for trailblazers who took arrows
+remakePlist=0
+# fix the ciphers and MACs
+cipherCheck=`grep arcfour /etc/ssh/sshd_config`
+if [ "$cipherCheck" != "" ]; then
+	sed -i '/Ciphers chacha20-poly1305@openssh.com,aes128-ctr,aes192-ctr,aes256-ctr,arcfour256,arcfour128,arcfour/d' /etc/ssh/sshd_config
+	echo 'Ciphers chacha20-poly1305@openssh.com,aes256-ctr' >> /etc/ssh/sshd_config
+fi
+maCheck=`grep hmac-sha1 /etc/ssh/sshd_config`
+if [ "$maCheck" != "" ]; then
+	sed -i '/MACs hmac-sha2-512,hmac-sha1,hmac-ripemd160,hmac-sha2-512-etm@openssh.com/d' /etc/ssh/sshd_config
+	echo 'MACs hmac-sha2-512-etm@openssh.com,hmac-ripemd160' >> /etc/ssh/sshd_config
+fi
+# put the ed25519 key back
+edKeyPresent=`grep ssh_host_ed25519_key /etc/ssh/sshd_config`
+if [ "$edKeyPresent" == "" ]; then
+	# trade: ecdsa goes away in favor of ed25519
+	sed -i 's/HostKey \/etc\/ssh\/ssh_host_ecdsa_key/HostKey \/etc\/ssh\/ssh_host_ed25519_key/g' /etc/ssh/sshd_config
+	service ssh restart
+	remakePlist=1
+fi
+# put the rsa key back
+rsaKeyPresent=`grep ssh_host_rsa_key /etc/ssh/sshd_config`
+if [ "$rsaKeyPresent" == "" ]; then
+    hostLine=`grep -n 'HostKeys for protocol version 2' /etc/ssh/sshd_config | awk -F : '{ print $1 }'`
+    if [ "$hostLine" != "" ]; then
+        # put it back into sshd_config
+        head -n $hostLine /etc/ssh/sshd_config > /tmp/sshd_config
+        echo 'HostKey /etc/ssh/ssh_host_rsa_key' >> /tmp/sshd_config
+        (( hostLine ++ ))
+        tail -n +$hostLine /etc/ssh/sshd_config >> /tmp/sshd_config
+        mv /tmp/sshd_config /etc/ssh/sshd_config
+        service ssh restart
+        remakePlist=1
+    else
+        echo "Something is really wrong with the sshd_config file"
+        exit 2
+    fi
+fi
+if [ $remakePlist -eq 1 ]; then
+    # remake Client/server.plist
+    hostKey=`ssh-keyscan -t ed25519 localhost | awk '{ print $2,$3 }'`
+    hostKeyRSA=`ssh-keyscan -t rsa localhost | awk '{ print $2,$3 }'`
+    ipAddress=`curl ipinfo.io | grep '"ip":' | awk '{ print $NF }' | tr -d \",`
+    echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+    <key>address</key>
+    <string>$serverFQDN</string>
+    <key>serverkey</key>
+    <string>[$serverFQDN]:3122,[$ipAddress]:3122 $hostKey</string>
+    <key>serverkeyrsa</key>
+    <string>[$serverFQDN]:3122,[$ipAddress]:3122 $hostKeyRSA</string>
+</dict>
+</plist>" > /usr/local/bin/BlueSky/Client/server.plist
+fi
 
 ## get emailAlertAddress from mysql
 myQry="select defaultemail from global"
