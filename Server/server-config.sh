@@ -82,6 +82,7 @@ echo "$serverFQDN" > /usr/local/bin/BlueSky/Admin\ Tools/server.txt
 
 ## reconfigure sshd_config to meet our specifications
 sed -i 's/Port 22/Port 22\nPort 3122/g' /etc/ssh/sshd_config
+echo '' >> /etc/ssh/sshd_config
 echo 'Ciphers chacha20-poly1305@openssh.com,aes256-ctr' >> /etc/ssh/sshd_config
 echo 'MACs hmac-sha2-512-etm@openssh.com,hmac-ripemd160' >> /etc/ssh/sshd_config
 sed -i '/HostKey \/etc\/ssh\/ssh_host_dsa_key/d' /etc/ssh/sshd_config
