@@ -405,6 +405,11 @@ elif [ "$confProxy" == "" ] && [ -e "$ourHome/.ssh/config" ]; then
   restartConnection
 fi
 
+# if the keys aren't made at this point, we should make them
+if [ ! -e "$ourHome/.ssh/bluesky_client" ]; then
+	reKey
+fi
+
 # ensure autossh is alive and restart if not
 getAutoPid
 if [ "$autoPid" == "" ]; then
