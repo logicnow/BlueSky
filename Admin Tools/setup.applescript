@@ -15,6 +15,8 @@ Licensed under the Apache License, Version 2.0 (the "License");
 
 -- This script readies and uploads a public key to the server for admin use
 
+-- Admin Tools require 10.11 and higher
+
 --set serverLoc to path to resource "server.txt" in bundle (path to me)
 --set serverPos to POSIX path of serverLoc
 --set serverAddr to do shell script "cat " & the quoted form of serverPos
@@ -48,7 +50,7 @@ if myChoice is {button returned:"This Mac"} then
 		do shell script "rm -f ~/.ssh/bluesky_admin.pub"
 	end try
 	
-	-- TODO: this might screw up 10.11 and earlier, needs testing
+	-- TODO: this might screw up 10.11, needs testing
 	try
 		set hostEntry to do shell script "grep 'Host " & serverAddr & "' ~/.ssh/config; exit 0"
 		if hostEntry is "" then
@@ -57,7 +59,7 @@ if myChoice is {button returned:"This Mac"} then
 		end if
 	end try
 	
-	do shell script "ssh-keygen -q -t ecdsa-sha2-nistp256 -N '" & my_password & "' -f ~/.ssh/bluesky_admin -C \"" & " uploaded@" & epochTime & " " & userName & "@" & hostName & "\""
+	do shell script "ssh-keygen -q -t ed25519 -N '" & my_password & "' -f ~/.ssh/bluesky_admin -C \"" & " uploaded@" & epochTime & " " & userName & "@" & hostName & "\""
 	
 	set uploadResult to do shell script "pubKey=`openssl smime -encrypt -aes256 -in ~/.ssh/bluesky_admin.pub -outform PEM " & the quoted form of adminPos & "`;curl -s -S -m 60 -1 --retry 4 -X POST --data-urlencode \"newpub=$pubKey\" https://" & serverAddr & "/cgi-bin/collector.php"
 	
