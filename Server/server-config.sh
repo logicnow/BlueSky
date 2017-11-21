@@ -94,23 +94,14 @@ echo "$serverFQDN" > /usr/local/bin/BlueSky/Server/server.txt
 echo "$serverFQDN" > /usr/local/bin/BlueSky/Admin\ Tools/server.txt
 
 ## reconfigure sshd_config to meet our specifications
-echo 'Ciphers chacha20-poly1305@openssh.com,aes128-ctr,aes192-ctr,aes256-ctr,arcfour256,arcfour128,arcfour' >> /etc/ssh/sshd_config
-echo 'MACs hmac-sha2-512,hmac-sha1,hmac-ripemd160' >> /etc/ssh/sshd_config
-sed -i '/HostKey \/etc\/ssh\/ssh_host_dsa_key/d' /etc/ssh/sshd_config
-sed -i '/HostKey \/etc\/ssh\/ssh_host_rsa_key/d' /etc/ssh/sshd_config
-sed -i '/HostKey \/etc\/ssh\/ssh_host_ed25519_key/d' /etc/ssh/sshd_config
-if [[ -z ${IN_DOCKER} ]]; then
-	sed -i 's/Port 22/Port 22\nPort 3122/g' /etc/ssh/sshd_config
-	service sshd restart
-fi
-=======
-sed -i 's/Port 22/Port 22\nPort 3122/g' /etc/ssh/sshd_config
-echo '' >> /etc/ssh/sshd_config
 echo 'Ciphers chacha20-poly1305@openssh.com,aes256-ctr' >> /etc/ssh/sshd_config
 echo 'MACs hmac-sha2-512-etm@openssh.com,hmac-ripemd160' >> /etc/ssh/sshd_config
 sed -i '/HostKey \/etc\/ssh\/ssh_host_dsa_key/d' /etc/ssh/sshd_config
 sed -i '/HostKey \/etc\/ssh\/ssh_host_ecdsa_key/d' /etc/ssh/sshd_config
-service sshd restart
+if [[ -z ${IN_DOCKER} ]]; then
+	sed -i 's/Port 22/Port 22\nPort 3122/g' /etc/ssh/sshd_config
+	service sshd restart
+fi
 
 ## setup local firewall
 if [[ -z ${IN_DOCKER} ]]; then
@@ -227,9 +218,18 @@ myQry="update membership_users set passMD5=MD5('$webAdminPassword'),email='$emai
 $myCmd "$myQry"
 
 ## set collector mysql perms
-myQry="create user 'collector'@'localhost' identified by '$mysqlCollectorPass';"
+# set variable to refer to what host(s) can connect to mysql
+mysqlHostSecurity="localhost"
+if [[ ${IN_DOCKER} ]]; then
+	mysqlHostSecurity="%"
+	# lets make sure the collector mysql user doesn't exist as we will be recreating it
+	myQry="drop user 'collector'@'$mysqlHostSecurity';"
+	$myCmd "$myQry"
+fi
+# create user
+myQry="create user 'collector'@'$mysqlHostSecurity' identified by '$mysqlCollectorPass';"
 $myCmd "$myQry"
-myQry="grant select on BlueSky.computers to 'collector'@'localhost';"
+myQry="grant select on BlueSky.computers to 'collector'@'$mysqlHostSecurity';"
 $myCmd "$myQry"
 
 ## fail2ban conf
