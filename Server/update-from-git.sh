@@ -48,7 +48,7 @@ if [ "$mysqlCollectorPass" == "" ]; then
 	echo "Collector creds got trashed. Will reset."
   mysqlCollectorPass=`tr -dc A-Za-z0-9 < /dev/urandom | head -c 48 | xargs`
   # TODO - test this deletion
-  myQry="delete user 'collector'@'localhost';"
+  myQry="drop user 'collector'@'localhost';"
   $myCmd "$myQry"
   myQry="create user 'collector'@'localhost' identified by '$mysqlCollectorPass';"
   $myCmd "$myQry"
