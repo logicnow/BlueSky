@@ -2,17 +2,6 @@
 
 This is an attempt at getting BlueSky to run within docker.  This should allow it to be easily setup on a wide variety of systems that support docker containers.
 
-### How to build
-
-Clone the git repo and change into the directory
-```
-docker build -t bluesky .
-```
-
-You now have an image built and ready for deployment.
-
-_this process will eventually be replaced by having an auto-build linked to Docker Hub_
-
 ### Environment variables
 
 These variables can be overriden when you run the bluesky docker container.
@@ -57,7 +46,7 @@ docker run -d --name bluesky \
 	-e USE_HTTP=1 \
 	-p 80:80 \
 	-p 3122:22 \
-	bluesky
+	sphen/bluesky
 ```
 
 ### Troubleshooting
@@ -79,3 +68,9 @@ docker exec -it bluesky bash
   - Also look into persisting the collector password.
 - Fix SSL if being used in container.  right now complaining about "/etc/ssl/certs/ssl-cert-snakeoil.pem"
 - Add example of Caddy docker container in front of bluesky for auto-generated SSL certificates :)
+
+### Links
+
+Auto-build on Docker Hub: https://hub.docker.com/r/sphen/bluesky/
+Forked BlueSky on GitHub: https://github.com/logicnow/BlueSky
+
