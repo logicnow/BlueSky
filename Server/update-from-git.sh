@@ -47,7 +47,6 @@ myCmd="/usr/bin/mysql --defaults-file=/var/local/my.cnf BlueSky -N -B -e"
 if [ "$mysqlCollectorPass" == "" ]; then
 	echo "Collector creds got trashed. Will reset."
   mysqlCollectorPass=`tr -dc A-Za-z0-9 < /dev/urandom | head -c 48 | xargs`
-  # TODO - test this deletion
   myQry="drop user 'collector'@'localhost';"
   $myCmd "$myQry"
   myQry="create user 'collector'@'localhost' identified by '$mysqlCollectorPass';"
