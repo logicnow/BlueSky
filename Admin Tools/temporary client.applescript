@@ -56,7 +56,7 @@ on run
 	end try
 	
 	try
-		do shell script "ssh-keygen -q -t rsa -N \"\" -f ~/.ssh/bluesky_tmp -C \"tmp-`date +%s`\""
+		do shell script "ssh-keygen -q -t ssh-ed25519 -N \"\" -f ~/.ssh/bluesky_tmp -C \"tmp-`date +%s`\""
 	on error errStr
 		display dialog "Please tell your tech that there was a key failure: " & errStr buttons {"Quit"} default button 1
 		quit
@@ -74,7 +74,7 @@ on run
 	set sshPort to (22000 + portNum)
 	set vncPort to (24000 + portNum)
 	
-	do shell script "ssh -o StrictHostKeyChecking=no -c chacha20-poly1305@openssh.com -o HostKeyAlgorithms=ecdsa-sha2-nistp256 -m hmac-sha2-512 -i ~/.ssh/bluesky_tmp -nNT -R " & sshPort & ":localhost:22 -R " & vncPort & ":localhost:5900 -p 3122 bluesky@" & serverAddr & " &> /dev/null & echo $!"
+	do shell script "ssh -o StrictHostKeyChecking=no -c chacha20-poly1305@openssh.com -o HostKeyAlgorithms=ssh-ed25519 -m hmac-sha2-512-etm@openssh.com -o KexAlgorithms=curve25519-sha256@libssh.org -i ~/.ssh/bluesky_tmp -nNT -R " & sshPort & ":localhost:22 -R " & vncPort & ":localhost:5900 -p 3122 bluesky@" & serverAddr & " &> /dev/null & echo $!"
 	set sshPid to the result
 	try
 		delay 2

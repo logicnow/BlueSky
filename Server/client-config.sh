@@ -57,7 +57,8 @@ if [ "$reKey" == "" ]; then
 	echo command=\"/var/bluesky/.ssh/wrapper.sh\",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty `cat /usr/local/bin/BlueSky/Server/blueskyd.pub` > /usr/local/bin/BlueSky/Client/.ssh/authorized_keys
 
 	# create server.plist
-	hostKey=`ssh-keyscan -t ecdsa-sha2-nistp256 localhost | awk '{ print $2,$3 }'`
+	hostKey=`ssh-keyscan -t ed25519 localhost | awk '{ print $2,$3 }'`
+	hostKeyRSA=`ssh-keyscan -t rsa localhost | awk '{ print $2,$3 }'`
 	ipAddress=`curl ipinfo.io | grep '"ip":' | awk '{ print $NF }' | tr -d \",`
 	echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
@@ -67,6 +68,8 @@ if [ "$reKey" == "" ]; then
 	<string>$hostName</string>
 	<key>serverkey</key>
 	<string>[$hostName]:3122,[$ipAddress]:3122 $hostKey</string>
+	<key>serverkeyrsa</key>
+	<string>[$hostName]:3122,[$ipAddress]:3122 $hostKeyRSA</string>
 </dict>
 </plist>" > /usr/local/bin/BlueSky/Client/server.plist
 fi

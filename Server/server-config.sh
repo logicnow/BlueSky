@@ -103,6 +103,14 @@ if [[ -z ${IN_DOCKER} ]]; then
 	sed -i 's/Port 22/Port 22\nPort 3122/g' /etc/ssh/sshd_config
 	service sshd restart
 fi
+=======
+sed -i 's/Port 22/Port 22\nPort 3122/g' /etc/ssh/sshd_config
+echo '' >> /etc/ssh/sshd_config
+echo 'Ciphers chacha20-poly1305@openssh.com,aes256-ctr' >> /etc/ssh/sshd_config
+echo 'MACs hmac-sha2-512-etm@openssh.com,hmac-ripemd160' >> /etc/ssh/sshd_config
+sed -i '/HostKey \/etc\/ssh\/ssh_host_dsa_key/d' /etc/ssh/sshd_config
+sed -i '/HostKey \/etc\/ssh\/ssh_host_ecdsa_key/d' /etc/ssh/sshd_config
+service sshd restart
 
 ## setup local firewall
 if [[ -z ${IN_DOCKER} ]]; then
@@ -117,7 +125,7 @@ if [[ -z ${IN_DOCKER} ]]; then
 	apt-get update
 	sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password $mysqlRootPass"
 	sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $mysqlRootPass"
-	apt-get -y install apache2 fail2ban mysql-server php-mysql php libapache2-mod-php php-mcrypt php-mysql inoticoming swaks
+	apt-get -y install apache2 fail2ban mysql-server php-mysql php libapache2-mod-php php-mcrypt php-mysql inoticoming swaks curl
 fi
 
 ## setup user accounts/folders
@@ -239,6 +247,9 @@ $myCmd "$myQry"
 
 ## update emailHelper-dist.  You still need to enable it.
 sed -i "s/EMAILADDRESS/$emailAlertAddress/g" /usr/local/bin/BlueSky/Server/emailHelper-dist.sh
+
+## put server fqdn into client config.disabled for proxy routing
+sed -i "s/SERVER/$serverFQDN/g" /usr/local/bin/BlueSky/Client/.ssh/config.disabled
 
 ## Run setup for client files
 /usr/local/bin/BlueSky/Server/client-config.sh

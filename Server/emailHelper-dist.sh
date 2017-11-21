@@ -23,12 +23,23 @@
 ## RENAME to emailHelper.sh to activate after configuring the variables below
 
 fromAddress="EMAILADDRESS"
-toAddress="EMAILADDRESS"
 subjectLine="$1"
 messageBody="$2"
 smtpServer=""
 smtpAuth=""
 smtpPass=""
+
+## bail on this is if the server variable isn't set
+if [ "$smtpServer" == "" ]; then
+  echo "No server set up. Please edit emailHelper and try again."
+  exit 2
+fi
+
+## get the To address from mySql
+myCmd="/usr/bin/mysql --defaults-file=/var/local/my.cnf BlueSky -N -B -e"
+myQry="select defaultemail from global"
+toAddress=`$myCmd "$myQry"`
+
 
 ## substitute in your preferred email method
 

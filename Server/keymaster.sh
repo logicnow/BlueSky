@@ -42,7 +42,7 @@ keyValid=`ssh-keygen -l -f /tmp/$tmpName.pub`
 # keyValid contains the hash that will appear in auth.log
 # 256 SHA256:Sahm5Rft8nvUQ5425YgrrSNGosZA4hf/P2NmhRr2NL0 uploaded@1510761187 sysadmin@Sidekick.local (ECDSA)
 fingerPrint=`echo "$keyValid" | awk '{ print $2 }' | cut -d : -f 2`
-if [[ "$keyValid" == *"ECDSA"* ]]; then
+if [[ "$keyValid" == *"ED25519"* ]] || [[ "$keyValid" == *"RSA"* ]]; then
   mv /tmp/$tmpName.pub /home/$targetLoc/newkeys/$tmpName.pub
   echo "Installed"
   if [ "$targetLoc" == "admin" ] && [ -e /usr/local/bin/BlueSky/Server/emailHelper.sh ]; then
