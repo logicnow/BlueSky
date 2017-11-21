@@ -38,7 +38,7 @@ function allGood {
 
 function snMismatch {
 	echo "Serial mismatch. Returned: $testConn"
-	myQry="update computers set status='Error: serial mismatch returned $testConn',datetime='$timeStamp' where serialnum='$serialNum'"
+	myQry="update computers set status='ERROR: serial mismatch returned $testConn',datetime='$timeStamp' where serialnum='$serialNum'"
 	$myCmd "$myQry"
 }
 
