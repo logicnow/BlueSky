@@ -43,13 +43,13 @@ if [ "$webAdminPassword" == "" ]; then
 		echo "This value cannot be empty. Please try again."
 		exit 2
 	fi
-fi
 	echo "Please enter the password again."
 	read webPassConf
 	if [ "$webAdminPassword" != "$webPassConf" ]; then
 		echo "Sorry the passwords don't match. Please try again."
 		exit 2
 	fi
+fi
 if [ "$emailAlertAddress" == "" ]; then
 	echo "Please enter an email address where you will receive alerts."
 	read emailAlertAddress
@@ -201,6 +201,9 @@ $myCmd "$myQry"
 
 ## update emailHelper-dist.  You still need to enable it.
 sed -i "s/EMAILADDRESS/$emailAlertAddress/g" /usr/local/bin/BlueSky/Server/emailHelper-dist.sh
+
+## put server fqdn into client config.disabled for proxy routing
+sed -i "s/SERVER/$serverFQDN/g" /usr/local/bin/BlueSky/Client/.ssh/config.disabled
 
 ## Run setup for client files
 /usr/local/bin/BlueSky/Server/client-config.sh
