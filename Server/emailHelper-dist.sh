@@ -31,7 +31,7 @@ smtpPass=""
 
 ## bail on this is if the server variable isn't set
 if [ "$smtpServer" == "" ]; then
-  echo "No server set up. Please edit emailHelper and try again.”
+  echo "No server set up. Please edit emailHelper and try again."
   exit 2
 fi
 
