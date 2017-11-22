@@ -14,7 +14,21 @@ WEBADMINPASS | admin
 MYSQLROOTPASS | admin
 EMAILALERT | root@localhost
 
-### Setup persistant storage
+### Docker volumes
+
+The following locations are mappable locations within the container.  These will be used for data that needs to persist between runs.
+
+Path | Note
+--- | ---
+/certs | bluesky ssh keys
+/home/admin/.ssh | ?
+/home/bluesky/.ssh | ?
+/home/admin/newkeys | ?
+/home/bluesky/newkeys | ?
+
+### Example Setup: Persistant storage
+
+#### MySQL
 
 Because we are also using MySQL within docker in this example setup, we need to setup the local storage first.  In the example below we are mapping the `/private/var/docker/bluesky/db` directory on the host to have the persistent mysql data.
 
@@ -22,6 +36,21 @@ First create and set permissions on the local folder:
 _you may want to modify permissions depending on how you are running docker_
 ```
 sudo mkdir -p /private/var/docker/bluesky/db
+sudo chmod -R 777 /private/var/docker/bluesky
+```
+
+#### BlueSky
+
+Because docker images do not keep their data between runs, we need to map locations (volumes) for persistent storage.  In the example below we are mapping various directories within `/private/var/docker/bluesky/` on the host to have the persistent key data.
+
+First create and set permissions on the local folder:
+_you may want to modify permissions depending on how you are running docker_
+```
+sudo mkdir -p /private/var/docker/bluesky/certs
+sudo mkdir -p /private/var/docker/bluesky/admin.ssh
+sudo mkdir -p /private/var/docker/bluesky/admin.newkeys
+sudo mkdir -p /private/var/docker/bluesky/bluesky.ssh
+sudo mkdir -p /private/var/docker/bluesky/bluesky.newkeys
 sudo chmod -R 777 /private/var/docker/bluesky
 ```
 
@@ -43,8 +72,14 @@ Setup BlueSky:
 ```
 docker run -d --name bluesky \
 	--link bluesky_db:db \
-	-e USE_HTTP=1 \
+	-e SERVERFQDN=bluesky.example.com \
+	-v /private/var/docker/bluesky/certs:/certs \
+	-v /private/var/docker/bluesky/admin.ssh:/home/admin/.ssh \
+	-v /private/var/docker/bluesky/bluesky.ssh:/home/bluesky/.ssh \
+	-v /private/var/docker/bluesky/admin.newkeys:/home/admin/newkeys \
+	-v /private/var/docker/bluesky/bluesky.newkeys:/home/bluesky/newkeys \
 	-p 80:80 \
+	-p 443:443 \
 	-p 3122:22 \
 	sphen/bluesky
 ```
@@ -63,14 +98,15 @@ docker exec -it bluesky bash
 
 ### TODO
 
-- Set up persistant storage for the bluesky container.
-  - This will require alot of changes to get those files within different directories.
-  - Also look into persisting the collector password.
-- Fix SSL if being used in container.  right now complaining about "/etc/ssl/certs/ssl-cert-snakeoil.pem"
+~~- Set up persistant storage for the bluesky container.~~
+  - ~~This will require alot of changes to get those files within different directories.~~
+- Fix SSL if being used in container.
+  - ~~right now complaining about "/etc/ssl/certs/ssl-cert-snakeoil.pem"~~
+  - outline instructions for mapping your own cert.
 - Add example of Caddy docker container in front of bluesky for auto-generated SSL certificates :)
+- Auto-generate client installer
 
 ### Links
 
 Auto-build on Docker Hub: https://hub.docker.com/r/sphen/bluesky/
 Forked BlueSky on GitHub: https://github.com/logicnow/BlueSky
-

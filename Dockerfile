@@ -27,7 +27,7 @@ RUN apt-get update && \
     swaks && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
+    
 RUN mkdir /usr/local/bin/BlueSky /var/run/sshd
 
 COPY . /usr/local/bin/BlueSky/
@@ -38,6 +38,6 @@ RUN chmod +x /usr/local/bin/run
 EXPOSE 80 443 3122
 
 # Define mountable directories.
-# VOLUME ["/etc/mysql", "/var/lib/mysql", "/home/ubuntu/workspace"]
+VOLUME ["/certs", "/home/admin/.ssh", "/home/bluesky/.ssh", "/home/admin/newkeys", "/home/bluesky/newkeys"]
 
 CMD ["/usr/local/bin/run"]
