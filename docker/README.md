@@ -108,5 +108,5 @@ docker exec -it bluesky bash
 
 ### Links
 
-Auto-build on Docker Hub: https://hub.docker.com/r/sphen/bluesky/
-Forked BlueSky on GitHub: https://github.com/logicnow/BlueSky
+- Auto-build on Docker Hub: https://hub.docker.com/r/sphen/bluesky/
+- Forked BlueSky on GitHub: https://github.com/logicnow/BlueSky
