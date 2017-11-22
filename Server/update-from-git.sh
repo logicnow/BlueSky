@@ -47,8 +47,7 @@ myCmd="/usr/bin/mysql --defaults-file=/var/local/my.cnf BlueSky -N -B -e"
 if [ "$mysqlCollectorPass" == "" ]; then
 	echo "Collector creds got trashed. Will reset."
   mysqlCollectorPass=`tr -dc A-Za-z0-9 < /dev/urandom | head -c 48 | xargs`
-  # TODO - test this deletion
-  myQry="delete user 'collector'@'localhost';"
+  myQry="drop user 'collector'@'localhost';"
   $myCmd "$myQry"
   myQry="create user 'collector'@'localhost' identified by '$mysqlCollectorPass';"
   $myCmd "$myQry"
@@ -67,6 +66,9 @@ chown -R www-data /usr/local/bin/BlueSky/Server/html
 chown www-data /usr/local/bin/BlueSky/Server/collector.php 
 chmod 700 /usr/local/bin/BlueSky/Server/collector.php 
 chown www-data /usr/local/bin/BlueSky/Server/blueskyd
+
+# sets auth.log so admin can read it
+chgrp admin /var/log/auth.log
 
 ## change the keys for 2.1
 # this can be removed in future versions, it's only for trailblazers who took arrows

@@ -135,6 +135,8 @@ chown www-data /home/admin/newkeys
 chown www-data /home/bluesky/newkeys
 chown -R admin /home/admin/.ssh
 chown -R bluesky /home/bluesky/.ssh
+# sets auth.log so admin can read it
+chgrp admin /var/log/auth.log
 
 ## configure apache2
 if [ "$USE_HTTP" -ne "1" ]; then

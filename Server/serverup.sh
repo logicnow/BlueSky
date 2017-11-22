@@ -75,6 +75,7 @@ for serialNum in $alertList; do
 		  if [ ${newStat:-0} -eq -2 ]; then
 			#this is the third time we have seen it as down - up to 10 min on checkin, 3 times with this script every 5 (0,-1,-2), time to alert
 			sendAlert Down
+			timeStamp=`date '+%Y-%m-%d %H:%M:%S %Z'`
 			myQry="update computers set status='Alert sent for offline',datetime='$timeStamp' where serialnum='$serialNum'"
 			$myCmd "$myQry"
 		  fi
@@ -89,12 +90,22 @@ for serialNum in $alertList; do
 		if [ ${firstStat:-0} -lt -1 ]; then 
 		  #down alert has been sent, follow up
 		  sendAlert Up
+		  timeStamp=`date '+%Y-%m-%d %H:%M:%S %Z'`
 		  myQry="update computers set status='Recovered from alert',datetime='$timeStamp' where serialnum='$serialNum'"
 		  $myCmd "$myQry"
 		fi
 	  fi
 	fi
 
+done
+
+## look for disconnected computers and mark offline
+myQry="select id from computers where datetime < (NOW() - INTERVAL 12 MINUTE) and status='Connection is good'"
+offlineList=`$myCmd "$myQry"`
+for thisId in $offlineList; do
+	timeStamp=`date '+%Y-%m-%d %H:%M:%S %Z'`
+	myQry="update computers set status='Offline',datetime='$timeStamp' where id='$thisId'"
+	$myCmd "$myQry"
 done
 
 exit 0
