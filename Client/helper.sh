@@ -66,6 +66,10 @@ if [ "$helpWithWhat" == "selfdestruct" ]; then
     exit 0
 fi
 
+# get the version of the OS so we can ensure compatiblity
+osRaw=`sw_vers -productVersion`
+osVersion=`echo "$osRaw" | awk -F . '{ print $2 }'`
+
 #check if user exists and create if necessary
 userCheck=`dscl . -read /Users/bluesky RealName`
 if [ "$userCheck" == "" ]; then
@@ -117,6 +121,12 @@ if [ "$helpWithWhat" == "fixPerms" ]; then
     logMe "Fixing permissions on our directory"
     chown -R bluesky "$ourHome"
     defaults write /Library/Preferences/com.apple.loginwindow HiddenUsersList -array-add bluesky  
+fi
+
+#GSS API config lines mess up client connections in 10.12+
+gssCheck=`grep -e ^'GSSAPIKeyExchange' -e ^'GSSAPITrustDNS' -e ^'GSSAPIDelegateCredentials' /etc/ssh/ssh_config`
+if [ "$gssCheck" != "" ] && [ ${osVersion:-0} -gt 11 ]; then
+	grep -v ^'GSSAPIKeyExchange' /etc/ssh/ssh_config | grep -v ^'GSSAPITrustDNS' | grep -v ^'GSSAPIDelegateCredentials' > /tmp/ssh_config && mv /tmp/ssh_config /etc/ssh/ssh_config
 fi
 
 #sometimes bluesky user can't kill shells
