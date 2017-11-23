@@ -124,4 +124,7 @@ fi
 if [[ ${IN_DOCKER} ]]; then
 	# stop ssh - as we will be starting later
 	/usr/bin/killall sshd
+	
+	# lets make an installer pkg!
+	/usr/local/bin/build_pkg.sh
 fi

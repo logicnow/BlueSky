@@ -25,6 +25,7 @@ Path | Note
 /home/bluesky/.ssh | ?
 /home/admin/newkeys | ?
 /home/bluesky/newkeys | ?
+/tmp/pkg | Client install pkg
 
 ### Example Setup: Persistant storage
 
@@ -51,6 +52,7 @@ sudo mkdir -p /private/var/docker/bluesky/admin.ssh
 sudo mkdir -p /private/var/docker/bluesky/admin.newkeys
 sudo mkdir -p /private/var/docker/bluesky/bluesky.ssh
 sudo mkdir -p /private/var/docker/bluesky/bluesky.newkeys
+sudo mkdir -p /private/var/docker/bluesky/pkg
 sudo chmod -R 777 /private/var/docker/bluesky
 ```
 
@@ -78,6 +80,7 @@ docker run -d --name bluesky \
 	-v /private/var/docker/bluesky/bluesky.ssh:/home/bluesky/.ssh \
 	-v /private/var/docker/bluesky/admin.newkeys:/home/admin/newkeys \
 	-v /private/var/docker/bluesky/bluesky.newkeys:/home/bluesky/newkeys \
+	-v /private/var/docker/bluesky/pkg:/tmp/pkg \
 	-p 80:80 \
 	-p 443:443 \
 	-p 3122:22 \

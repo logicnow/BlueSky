@@ -24,6 +24,7 @@ RUN apt-get update && \
     php-mysql \
     inoticoming \
     supervisor \
+    cpio \
     swaks && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -31,13 +32,14 @@ RUN apt-get update && \
 RUN mkdir /usr/local/bin/BlueSky /var/run/sshd
 
 COPY . /usr/local/bin/BlueSky/
-COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY docker/run /usr/local/bin/run
-RUN chmod +x /usr/local/bin/run
+
+RUN mv /usr/local/bin/BlueSky/docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf && \
+	mv /usr/local/bin/BlueSky/docker/* /usr/local/bin/ && \
+	chmod +x /usr/local/bin/run /usr/local/bin/build_pkg.sh
 
 EXPOSE 80 443 3122
 
 # Define mountable directories.
-VOLUME ["/certs", "/home/admin/.ssh", "/home/bluesky/.ssh", "/home/admin/newkeys", "/home/bluesky/newkeys"]
+VOLUME ["/certs", "/home/admin/.ssh", "/home/bluesky/.ssh", "/home/admin/newkeys", "/home/bluesky/newkeys", "/tmp/pkg"]
 
 CMD ["/usr/local/bin/run"]
