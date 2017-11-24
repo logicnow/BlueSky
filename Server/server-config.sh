@@ -207,7 +207,12 @@ else
 	echo "host = localhost" >> /var/local/my.cnf
 fi
 chown root:www-data /var/local/my.cnf
-chmod 640 /var/local/my.cnf
+if [[ ${IN_DOCKER} ]]; then
+	# fix for docker?  i was getting permission denied on reading this on client connect.
+	chmod 644 /var/local/my.cnf
+else
+	chmod 640 /var/local/my.cnf
+fi
 
 # setup database
 # test if database already exists

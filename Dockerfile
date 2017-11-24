@@ -26,6 +26,7 @@ RUN apt-get update && \
     inoticoming \
     supervisor \
     cpio \
+    netcat \
     swaks && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
