@@ -27,15 +27,13 @@ mysqlRootPass=""
 emailAlertAddress=""
 # --------- DO NOT EDIT BELOW ------------------------------------------------------
 apacheConf="default-ssl"
-dbHost="127.0.0.1"
 if [[ ${IN_DOCKER} ]]; then
 	serverFQDN=$SERVERFQDN
 	webAdminPassword=$WEBADMINPASS
 	mysqlRootPass=$MYSQLROOTPASS
 	emailAlertAddress=$EMAILALERT
-	dhHost="db"
 fi
-if [[ ${USE_HTTP} ]]; then
+if [ "$USE_HTTP" -eq "1" ]; then
 	apacheConf="000-default"
 fi
 
@@ -140,6 +138,10 @@ chgrp admin /var/log/auth.log
 
 ## configure apache2
 if [ "$USE_HTTP" -ne "1" ]; then
+	if [[ ${IN_DOCKER} ]]; then
+		# throw in self signed cert
+		openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/ssl-cert-snakeoil.key -out /etc/ssl/certs/ssl-cert-snakeoil.pem -subj "/C=US/ST=Somewhere/L=Somewhere/O=BlueSky/OU=Development/CN=$SERVERFQDN"
+	fi
 	a2enmod ssl
 	a2ensite default-ssl
 fi
@@ -162,7 +164,8 @@ mv /tmp/"$apacheConf".conf /etc/apache2/sites-enabled/"$apacheConf".conf
 if [ "$USE_HTTP" -ne "1" ]; then
 	## setup port 80 redirect to 443
 	echo "<VirtualHost *:80>
-	Redirect permanent / https://$serverFQDN/" > /tmp/000-default.conf
+	Redirect permanent / https://$serverFQDN/
+	ServerName $serverFQDN" > /tmp/000-default.conf
 	tail -n +2 /etc/apache2/sites-enabled/000-default.conf  >> /tmp/000-default.conf
 	mv /etc/apache2/sites-enabled/000-default.conf /tmp/000-default.conf.backup
 	mv /tmp/000-default.conf /etc/apache2/sites-enabled/000-default.conf
@@ -196,8 +199,12 @@ fi
 ## setup my.cnf
 echo "[client]
 user = root
-password = $mysqlRootPass
-host = $dhHost" > /var/local/my.cnf
+password = $mysqlRootPass" > /var/local/my.cnf
+if [[ ${IN_DOCKER} ]]; then
+	echo "host = $MYSQLSERVER" >> /var/local/my.cnf
+else
+	echo "host = localhost" >> /var/local/my.cnf
+fi
 chown root:www-data /var/local/my.cnf
 chmod 640 /var/local/my.cnf
 
@@ -265,10 +272,5 @@ if [[ -z ${IN_DOCKER} ]]; then
 	echo "in Apache by editing SSL paths in /etc/apache2/sites-enabled/default-ssl.conf"
 	echo "BlueSky will not connect to servers with self-signed or invalid certificates."
 	echo "And configure /usr/local/bin/BlueSky/Server/emailHelper.sh with your preferred SMTP setup."
-else
-	if [ "$USE_HTTP" -ne "1" ]; then
-		# throw in self signed cert
-		openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/ssl-cert-snakeoil.key -out /etc/ssl/certs/ssl-cert-snakeoil.pem -subj "/C=US/ST=Somewhere/L=Somewhere/O=BlueSky/OU=Development/CN=$SERVERFQDN"
-	fi
 fi
 exit 0
