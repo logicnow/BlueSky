@@ -189,6 +189,9 @@ ln -s /usr/local/bin/BlueSky/Server/collector.php /usr/lib/cgi-bin/collector.php
 chown www-data /usr/local/bin/BlueSky/Server/collector.php 
 chmod 700 /usr/local/bin/BlueSky/Server/collector.php 
 sed -i "s/CHANGETHIS/$mysqlCollectorPass/g" /usr/lib/cgi-bin/collector.php
+if [[ ${IN_DOCKER} ]]; then
+	sed -i "s/localhost/$MYSQLSERVER/g" /usr/lib/cgi-bin/collector.php
+fi
 
 ## setup my.cnf
 echo "[client]
@@ -212,7 +215,7 @@ myCmd="/usr/bin/mysql --defaults-file=/var/local/my.cnf BlueSky -N -B -e"
 ## setup credentials in /var/www/html/config.php
 sed -i "s/MYSQLROOT/$mysqlRootPass/g" /var/www/html/config.php
 if [[ ${IN_DOCKER} ]]; then
-	sed -i "s/localhost/db/g" /var/www/html/config.php
+	sed -i "s/localhost/$MYSQLSERVER/g" /var/www/html/config.php
 fi
 
 ## setup credentials in membership_users table
