@@ -23,11 +23,9 @@ if [ "${SSH_ORIGINAL_COMMAND:=UNSET}" == "UNSET" ]; then
 	exit 127
 fi
 
-ourHome="/var/bluesky"
-
 command="$SSH_ORIGINAL_COMMAND"; export command
-testCmd[1]="/usr/bin/defaults read $ourHome/settings serial"
-testCmd[2]="/usr/sbin/system_profiler SPHardwareDataType"
+testCmd[1]="/usr/bin/defaults read /var/bluesky/settings serial"
+testCmd[2]="/usr/libexec/PlistBuddy -c 'Print serial' /var/bluesky/settings.plist"
 
 for thisCmd in "${testCmd[@]}"; do
   if [ "$command" == "$thisCmd" ]; then

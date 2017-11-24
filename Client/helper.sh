@@ -60,6 +60,7 @@ fi
 
 # initiate self-destruct
 if [ "$helpWithWhat" == "selfdestruct" ]; then
+    killShells
     rm -rf "$ourHome"
     dscl . -delete /Users/bluesky
     launchctl unload /Library/LaunchDaemons/com.solarwindsmsp.bluesky.*.plist && rm -f /Library/LaunchDaemons/com.solarwindsmsp.bluesky.*.plist
@@ -101,7 +102,9 @@ if [ "$userCheck" == "" ]; then
     chown -R bluesky "$ourHome" 
     dseditgroup -o edit -a bluesky -t user com.apple.access_ssh 2> /dev/null
     # kill any autossh and shells that may have belonged to the old user
-    killShells  
+    killShells
+    # defaults may not be able to validate the serial number until cfprefsd restarts
+    killall cfprefsd
 fi
 
 #help me help you.  help me... help you.
