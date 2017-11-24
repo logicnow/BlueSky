@@ -70,3 +70,16 @@ mkbom -i /tmp/pkg/.bom /tmp/pkg-flat/Bom
 # pkg it up!!
 ( cd /tmp/pkg-flat && xar --compression none -cf "${PKG_LOCATION}" * ) 
 echo "osx package has been built: ${PKG_LOCATION}"
+
+RANDOM_DIR=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w ${1:-32} | head -n 1`
+mkdir /var/www/html/"${RANDOM_DIR}"
+ln -s "${PKG_LOCATION}" /var/www/html/"${RANDOM_DIR}"/
+cat <<EOF > /var/www/html/hooks/header-extras.php
+<?php
+\$mi = getMemberInfo();
+if(in_array(\$mi['group'], array('Admins', 'Data entry'))){
+?>
+<div id="top_buttons" class="hidden-print">
+	<div class="btn-group btn-group-lg visible-md visible-lg all_records pull-left">
+		<button onClick="window.location='${RANDOM_DIR}/${APPNAME}-${VERSION}.pkg';" class="btn btn-default"><i class="glyphicon glyphicon-download-alt"></i> Download BlueSky Agent</button>
+EOF
