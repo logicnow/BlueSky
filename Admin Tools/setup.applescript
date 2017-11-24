@@ -17,10 +17,10 @@ Licensed under the Apache License, Version 2.0 (the "License");
 
 -- Admin Tools require 10.11 and higher
 
---set serverLoc to path to resource "server.txt" in bundle (path to me)
---set serverPos to POSIX path of serverLoc
---set serverAddr to do shell script "cat " & the quoted form of serverPos
-set serverAddr to "" -- put your server FQDN here
+set serverLoc to path to resource "server.txt" in bundle (path to me)
+set serverPos to POSIX path of serverLoc
+set serverAddr to do shell script "cat " & the quoted form of serverPos
+--set serverAddr to "" -- put your server FQDN here
 
 set adminLoc to path to resource "blueskyadmin.pub" in bundle (path to me)
 set adminPos to POSIX path of adminLoc
