@@ -139,4 +139,5 @@ if [[ ${IN_DOCKER} ]]; then
 	
 	# lets make an installer pkg!
 	/usr/local/bin/build_pkg.sh
+	/usr/local/bin/build_admin_pkg.sh
 fi

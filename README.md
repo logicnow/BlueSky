@@ -122,6 +122,7 @@ docker exec -it bluesky bash
   - outline instructions for mapping your own cert.
 - Add example of Caddy docker container in front of bluesky for auto-generated SSL certificates :)
 - ~~Auto-generate client installer~~
+- Handle emailHelper setup
 
 ### Links
 

@@ -36,7 +36,7 @@ COPY . /usr/local/bin/BlueSky/
 
 RUN mv /usr/local/bin/BlueSky/docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf && \
 	mv /usr/local/bin/BlueSky/docker/* /usr/local/bin/ && \
-	chmod +x /usr/local/bin/run /usr/local/bin/build_pkg.sh
+	chmod +x /usr/local/bin/run /usr/local/bin/build_pkg.sh /usr/local/bin/build_admin_pkg.sh
 
 EXPOSE 80 443 3122
 
