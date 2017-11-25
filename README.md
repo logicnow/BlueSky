@@ -101,6 +101,19 @@ docker run -d --name bluesky \
 	sphen/bluesky
 ```
 
+### Upgrading BlueSky Server
+
+To update your BlueSky docker instance it is very simple
+```
+docker pull sphen/bluesky
+docker rm -f BlueSky
+```
+
+Then just issue your `docker run` command you originally used to build your specific container!
+```
+docker run -d --name bluesky .....
+```
+
 ### Troubleshooting
 
 You can get the logs from a container to see if there are any issues:
