@@ -70,6 +70,10 @@ chown www-data /usr/local/bin/BlueSky/Server/blueskyd
 # sets auth.log so admin can read it
 chgrp admin /var/log/auth.log
 
+# sets my.cnf so admin can read it to populate connection log
+chmod 640 /var/local/my.cnf 
+chown admin /var/local/my.cnf 
+
 ## change the keys for 2.1
 # this can be removed in future versions, it's only for trailblazers who took arrows
 remakePlist=0

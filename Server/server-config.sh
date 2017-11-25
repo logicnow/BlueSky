@@ -213,6 +213,7 @@ else
 	echo "host = 127.0.0.1" >> /var/local/my.cnf
 fi
 chown admin:www-data /var/local/my.cnf
+chmod 640 /var/local/my.cnf
 
 # setup database
 # test if database already exists
@@ -282,6 +283,5 @@ else
 	if [[ ${SMTP_SERVER} && ${SMTP_AUTH} && ${SMTP_PASS} ]]; then
 	# enable email alerts
 	mv /usr/local/bin/BlueSky/Server/emailHelper-dist.sh /usr/local/bin/BlueSky/Server/emailHelper.sh
-fi
 fi
 exit 0
