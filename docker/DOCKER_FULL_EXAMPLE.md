@@ -14,13 +14,13 @@ We will be using these docker containers:
 These are the values being used below - and will need modification from you:
 | Setting | Value |
 | --- | --- |
-| MySQL root password | `admin` |
-| Server FQDN | `bluesky.example.com` |
-| Web admin pass | `admin` |
-| Email alert address | `email@example.com` |
-| SMTP Server | `smtp.office365.com:587` |
-| SMTP user | `email@example.com` |
-| SMTP pass | `yourpassword` |
+| MySQL root password | admin |
+| Server FQDN | bluesky.example.com |
+| Web admin pass | admin |
+| Email alert address | email@example.com |
+| SMTP Server | smtp.office365.com:587 |
+| SMTP user | email@example.com |
+| SMTP pass | yourpassword |
 
 These are the local directories for persistent data:
 ```
