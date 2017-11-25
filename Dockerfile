@@ -42,6 +42,6 @@ RUN mv /usr/local/bin/BlueSky/docker/supervisord.conf /etc/supervisor/conf.d/sup
 EXPOSE 80 443 3122
 
 # Define mountable directories.
-VOLUME ["/certs", "/home/admin/.ssh", "/home/bluesky/.ssh", "/home/admin/newkeys", "/home/bluesky/newkeys", "/tmp/pkg"]
+VOLUME ["/certs", "/home/admin/.ssh", "/home/bluesky/.ssh", "/home/admin/newkeys", "/home/bluesky/newkeys", "/tmp/pkg", "/home/ssl/certs", "/home/ssl/private"]
 
 CMD ["/usr/local/bin/run"]

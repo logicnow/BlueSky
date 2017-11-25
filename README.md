@@ -21,9 +21,9 @@ These variables can be overriden when you run the bluesky docker container.
 
 Variable | Default Value | Note
 --- | --- | ---
-USE_HTTP | 0 | Set to 1 to use HTTP instead of HTTPS
 SERVERFQDN | localhost | Bluesky FQDN
 WEBADMINPASS | admin | 
+USE_HTTP | 0 | Set to 1 to use HTTP instead of HTTPS
 MYSQLSERVER | db | IP/DNS of your MySQL server (docker link to db by default)
 MYSQLROOTPASS | admin | 
 EMAILALERT | root@localhost | 
@@ -37,40 +37,44 @@ The following locations are mappable locations within the container.  These will
 
 Path | Note
 --- | ---
-/certs | bluesky ssh keys
+/certs | BlueSky SSH keys
 /home/admin/.ssh | ?
 /home/bluesky/.ssh | ?
 /home/admin/newkeys | ?
 /home/bluesky/newkeys | ?
+/home/ssl/certs | HTTPS certificate
+/home/ssl/private | HTTPS private key
 /tmp/pkg | Client install pkg
 
 ### Example Setup: Persistant storage
 
 #### MySQL
 
-Because we are also using MySQL within docker in this example setup, we need to setup the local storage first.  In the example below we are mapping the `/private/var/docker/bluesky/db` directory on the host to have the persistent mysql data.
+Because we are also using MySQL within docker in this example setup, we need to setup the local storage first.  In the example below we are mapping the `/var/docker/bluesky/db` directory on the host to have the persistent mysql data.
 
 First create and set permissions on the local folder:
 _you may want to modify permissions depending on how you are running docker_
 ```
-sudo mkdir -p /private/var/docker/bluesky/db
-sudo chmod -R 777 /private/var/docker/bluesky
+sudo mkdir -p /var/docker/bluesky/db
+sudo chmod -R 777 /var/docker/bluesky
 ```
 
 #### BlueSky
 
-Because docker images do not keep their data between runs, we need to map locations (volumes) for persistent storage.  In the example below we are mapping various directories within `/private/var/docker/bluesky/` on the host to have the persistent key data.
+Because docker images do not keep their data between runs, we need to map locations (volumes) for persistent storage.  In the example below we are mapping various directories within `/var/docker/bluesky/` on the host to have the persistent key data.
 
 First create and set permissions on the local folder:
 _you may want to modify permissions depending on how you are running docker_
 ```
-sudo mkdir -p /private/var/docker/bluesky/certs
-sudo mkdir -p /private/var/docker/bluesky/admin.ssh
-sudo mkdir -p /private/var/docker/bluesky/admin.newkeys
-sudo mkdir -p /private/var/docker/bluesky/bluesky.ssh
-sudo mkdir -p /private/var/docker/bluesky/bluesky.newkeys
-sudo mkdir -p /private/var/docker/bluesky/pkg
-sudo chmod -R 777 /private/var/docker/bluesky
+sudo mkdir -p /var/docker/bluesky/certs
+sudo mkdir -p /var/docker/bluesky/admin.ssh
+sudo mkdir -p /var/docker/bluesky/admin.newkeys
+sudo mkdir -p /var/docker/bluesky/bluesky.ssh
+sudo mkdir -p /var/docker/bluesky/bluesky.newkeys
+sudo mkdir -p /var/docker/bluesky/pkg
+sudo mkdir -p /var/docker/bluesky/ssl-certs
+sudo mkdir -p /var/docker/bluesky/ssl-private
+sudo chmod -R 777 /var/docker/bluesky
 ```
 
 ### Run BlueSky
@@ -79,7 +83,7 @@ Setup MySQL:
 _note that currently the root password is embedded in this command_
 ```
 docker run -d --name bluesky_db \
-	-v /private/var/docker/bluesky/db:/var/lib/mysql \
+	-v /var/docker/bluesky/db:/var/lib/mysql \
 	-e MYSQL_ROOT_HOST=% \
 	-e MYSQL_ROOT_PASSWORD=admin \
 	mysql/mysql-server:5.7
@@ -92,17 +96,26 @@ Setup BlueSky:
 docker run -d --name bluesky \
 	--link bluesky_db:db \
 	-e SERVERFQDN=bluesky.example.com \
-	-v /private/var/docker/bluesky/certs:/certs \
-	-v /private/var/docker/bluesky/admin.ssh:/home/admin/.ssh \
-	-v /private/var/docker/bluesky/bluesky.ssh:/home/bluesky/.ssh \
-	-v /private/var/docker/bluesky/admin.newkeys:/home/admin/newkeys \
-	-v /private/var/docker/bluesky/bluesky.newkeys:/home/bluesky/newkeys \
-	-v /private/var/docker/bluesky/pkg:/tmp/pkg \
+	-v /var/docker/bluesky/certs:/certs \
+	-v /var/docker/bluesky/admin.ssh:/home/admin/.ssh \
+	-v /var/docker/bluesky/bluesky.ssh:/home/bluesky/.ssh \
+	-v /var/docker/bluesky/admin.newkeys:/home/admin/newkeys \
+	-v /var/docker/bluesky/bluesky.newkeys:/home/bluesky/newkeys \
+	-v /var/docker/bluesky/ssl-certs:/home/ssl/certs \
+	-v /var/docker/bluesky/ssl-private:/home/ssl/private \
+	-v /var/docker/bluesky/pkg:/tmp/pkg \
 	-p 80:80 \
 	-p 443:443 \
 	-p 3122:22 \
 	sphen/bluesky
 ```
+
+### HTTPS SSL Certificate Setup
+
+If you are opting to use HTTPS within the docker container you should map in valid SSL certificates.  By default with no action, the container will generate a self-signed certificate.  If you have a valid `pem` and `key` file that you would like to use, we expect a few things:
+- You are mapping the `/home/ssl/certs` and `/home/ssl/private` volumes
+- The pem file to use within certs is named `ssl-cert-snakeoil.pem`
+- The key file to use within private is name `ssl-cert-snakeoil.key`
 
 ### Upgrading BlueSky Server
 
@@ -112,9 +125,9 @@ docker pull sphen/bluesky
 docker rm -f BlueSky
 ```
 
-Then just issue your `docker run` command you originally used to build your specific container!
+Then just issue the `docker run` command you originally used to build your specific container!
 ```
-docker run -d --name bluesky .....
+docker run -d --name bluesky <the rest of your arguments...> sphen/bluesky
 ```
 
 ### Troubleshooting
@@ -133,12 +146,14 @@ docker exec -it bluesky bash
 
 ~~- Set up persistant storage for the bluesky container.~~
   - ~~This will require alot of changes to get those files within different directories.~~
-- Fix SSL if being used in container.
+- ~~Fix SSL if being used in container.~~
   - ~~right now complaining about "/etc/ssl/certs/ssl-cert-snakeoil.pem"~~
-  - outline instructions for mapping your own cert.
+  - ~~outline instructions for mapping your own cert.~~
 - Add example of Caddy docker container in front of bluesky for auto-generated SSL certificates :)
 - ~~Auto-generate client installer~~
 - ~~Handle emailHelper setup~~
+- SSH Pub Key auth by default - instructions on setting keys
+- Bring back fail2ban
 
 ### Links
 
