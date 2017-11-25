@@ -27,7 +27,7 @@ USE_HTTP | 0 | Set to 1 to use HTTP instead of HTTPS
 MYSQLSERVER | db | IP/DNS of your MySQL server (docker link to db by default)
 MYSQLROOTPASS | admin | 
 EMAILALERT | root@localhost | 
-SMTP_SERVER | | SMTP Server (Required for email alerts)
+SMTP_SERVER | | SMTP Server (Required for email alerts) Port optional
 SMTP_AUTH | | SMTP auth user (Required for email alerts)
 SMTP_PASS | | SMTP auth pass (Required for email alerts)
 

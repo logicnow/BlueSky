@@ -27,7 +27,8 @@ RUN apt-get update && \
     supervisor \
     cpio \
     netcat \
-    swaks && \
+    swaks \
+    libnet-ssleay-perl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
     
