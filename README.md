@@ -117,6 +117,10 @@ If you are opting to use HTTPS within the docker container you should map in val
 - The pem file to use within certs is named `ssl-cert-snakeoil.pem`
 - The key file to use within private is name `ssl-cert-snakeoil.key`
 
+### Full Example Setup
+
+We have a full example setup utilizing Caddy for automatic SSL cert generation [at this page](docker/DOCKER_FULL_EXAMPLE.md).
+
 ### Upgrading BlueSky Server
 
 To update your BlueSky docker instance it is very simple
@@ -144,18 +148,11 @@ docker exec -it bluesky bash
 
 ### TODO
 
-~~- Set up persistant storage for the bluesky container.~~
-  - ~~This will require alot of changes to get those files within different directories.~~
-- ~~Fix SSL if being used in container.~~
-  - ~~right now complaining about "/etc/ssl/certs/ssl-cert-snakeoil.pem"~~
-  - ~~outline instructions for mapping your own cert.~~
-- Add example of Caddy docker container in front of bluesky for auto-generated SSL certificates :)
-- ~~Auto-generate client installer~~
-- ~~Handle emailHelper setup~~
 - SSH Pub Key auth by default - instructions on setting keys
 - Bring back fail2ban
+- Migration instructions
 
 ### Links
 
 - Auto-build on Docker Hub: https://hub.docker.com/r/sphen/bluesky/
-- Forked BlueSky on GitHub: https://github.com/logicnow/BlueSky
+- Parent BlueSky repo on GitHub: https://github.com/logicnow/BlueSky
