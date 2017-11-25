@@ -278,5 +278,10 @@ if [[ -z ${IN_DOCKER} ]]; then
 	echo "in Apache by editing SSL paths in /etc/apache2/sites-enabled/default-ssl.conf"
 	echo "BlueSky will not connect to servers with self-signed or invalid certificates."
 	echo "And configure /usr/local/bin/BlueSky/Server/emailHelper.sh with your preferred SMTP setup."
+else
+	if [[ ${SMTP_SERVER} && ${SMTP_AUTH} && ${SMTP_PASS} ]]; then
+	# enable email alerts
+	mv /usr/local/bin/BlueSky/Server/emailHelper-dist.sh /usr/local/bin/BlueSky/Server/emailHelper.sh
+fi
 fi
 exit 0

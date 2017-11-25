@@ -22,11 +22,14 @@ These variables can be overriden when you run the bluesky docker container.
 Variable | Default Value | Note
 --- | --- | ---
 USE_HTTP | 0 | Set to 1 to use HTTP instead of HTTPS
-SERVERFQDN | localhost
-WEBADMINPASS | admin
-MYSQLSERVER | db | set to the ip/dns of your MySQL server
-MYSQLROOTPASS | admin
-EMAILALERT | root@localhost
+SERVERFQDN | localhost | Bluesky FQDN
+WEBADMINPASS | admin | 
+MYSQLSERVER | db | IP/DNS of your MySQL server (docker link to db by default)
+MYSQLROOTPASS | admin | 
+EMAILALERT | root@localhost | 
+SMTP_SERVER | | SMTP Server (Required for email alerts)
+SMTP_AUTH | | SMTP auth user (Required for email alerts)
+SMTP_PASS | | SMTP auth pass (Required for email alerts)
 
 ### Docker volumes
 
@@ -135,7 +138,7 @@ docker exec -it bluesky bash
   - outline instructions for mapping your own cert.
 - Add example of Caddy docker container in front of bluesky for auto-generated SSL certificates :)
 - ~~Auto-generate client installer~~
-- Handle emailHelper setup
+- ~~Handle emailHelper setup~~
 
 ### Links
 

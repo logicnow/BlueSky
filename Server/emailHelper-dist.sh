@@ -29,6 +29,12 @@ smtpServer=""
 smtpAuth=""
 smtpPass=""
 
+if [[ ${IN_DOCKER} && ${SMTP_SERVER} && ${SMTP_AUTH} && ${SMTP_PASS} ]]; then
+	smtpServer=$SMTP_SERVER
+	smtpAuth=$SMTP_AUTH
+	smtpPass=$SMTP_PASS
+fi
+
 ## bail on this is if the server variable isn't set
 if [ "$smtpServer" == "" ]; then
   echo "No server set up. Please edit emailHelper and try again."
