@@ -12,6 +12,7 @@ We will be using these docker containers:
 - [abiosoft/caddy](https://hub.docker.com/r/abiosoft/caddy/)
 
 These are the values being used below - and will need modification from you:
+
 | Setting | Value |
 | --- | --- |
 | MySQL root password | admin |
