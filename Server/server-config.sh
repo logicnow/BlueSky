@@ -169,7 +169,7 @@ echo "[client]
 user = root
 password = $mysqlRootPass
 host = 127.0.0.1" > /var/local/my.cnf
-chown root:www-data /var/local/my.cnf
+chown admin:www-data /var/local/my.cnf
 chmod 640 /var/local/my.cnf
 
 # setup database
