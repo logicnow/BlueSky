@@ -12,48 +12,57 @@ We will be using these docker containers:
 - [abiosoft/caddy](https://hub.docker.com/r/abiosoft/caddy/)
 
 These are the values being used below - and will need modification from you:
-Setting | Value
---- | ---
-MySQL root password | `admin`
-Server FQDN | `bluesky.example.com`
-Web admin pass | `admin`
-Email alert address | `email@example.com`
-SMTP Server | `smtp.office365.com:587`
-SMTP user | `email@example.com`
-SMTP pass | `yourpassword`
+| Setting | Value |
+| --- | --- |
+| MySQL root password | `admin` |
+| Server FQDN | `bluesky.example.com` |
+| Web admin pass | `admin` |
+| Email alert address | `email@example.com` |
+| SMTP Server | `smtp.office365.com:587` |
+| SMTP user | `email@example.com` |
+| SMTP pass | `yourpassword` |
 
 These are the local directories for persistent data:
-> /var/docker/bluesky/db
-> /var/docker/bluesky/certs
-> /var/docker/bluesky/admin.ssh
-> /var/docker/bluesky/bluesky.ssh
-> /var/docker/bluesky/admin.newkeys
-> /var/docker/bluesky/bluesky.newkeys
-> /var/docker/caddy
+```
+/var/docker/bluesky/db
+/var/docker/bluesky/certs
+/var/docker/bluesky/admin.ssh
+/var/docker/bluesky/bluesky.ssh
+/var/docker/bluesky/admin.newkeys
+/var/docker/bluesky/bluesky.newkeys
+/var/docker/caddy
+```
 
 ### Steps
 
-##### Create the local storage directories
+#### Create the local storage directories
 
+> _Note you may need to set permissions_
 ```
-mkdir -p /var/docker/bluesky/db /var/docker/bluesky/certs /var/docker/bluesky/admin.ssh /var/docker/bluesky/bluesky.ssh /var/docker/bluesky/admin.newkeys /var/docker/bluesky/bluesky.newkeys /var/docker/caddy
+mkdir -p /var/docker/bluesky/db \
+	/var/docker/bluesky/certs \
+	/var/docker/bluesky/admin.ssh \
+	/var/docker/bluesky/bluesky.ssh \
+	/var/docker/bluesky/admin.newkeys \
+	/var/docker/bluesky/bluesky.newkeys \
+	/var/docker/caddy
 ```
 
-##### Create MySQL container
+#### Create MySQL container
 
 > _Note that the MySQL root password is in this command_
 ```
 docker run -d --name bluesky_db \
-    -v /var/docker/bluesky/db:/var/lib/mysql \
-    -e MYSQL_ROOT_HOST=% \
-    -e MYSQL_ROOT_PASSWORD=admin \
-    --restart always \
-    mysql/mysql-server:5.7
+	-v /var/docker/bluesky/db:/var/lib/mysql \
+	-e MYSQL_ROOT_HOST=% \
+	-e MYSQL_ROOT_PASSWORD=admin \
+	--restart always \
+	mysql/mysql-server:5.7
 ```
 
 **Wait a minute or two for the MySQL container to initialize.** You can get the status of the container by running `docker ps -a`.  Wait until you see it with a status of **(healthy)**
 
-##### Create BlueSky container
+#### Create BlueSky container
 
 > _Note all the variables that need to change_
 ```
@@ -73,11 +82,11 @@ docker run -d --name bluesky \
 	-v /var/docker/bluesky/admin.newkeys:/home/admin/newkeys \
 	-v /var/docker/bluesky/bluesky.newkeys:/home/bluesky/newkeys \
 	-p 3122:22 \
-    --restart always \
+	--restart always \
 	sphen/bluesky
 ```
 
-##### Create Caddyfile
+#### Create Caddyfile
 
 > _Note the first line containing the FQDN and the line starting with `tls` needs to be changed_
 ```
@@ -91,7 +100,7 @@ bluesky.example.com {
 EOF
 ```
 
-##### Create Caddy container
+#### Create Caddy container
 
 ```
 docker run -d --name caddy \
