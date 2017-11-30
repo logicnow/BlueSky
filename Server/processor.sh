@@ -178,9 +178,9 @@ if [ "$notifyMe" == "1" ]; then
 	myQry="select status from username where serialnum='$serialNum'"
 	myUser=`$myCmd "$myQry"`
 
-	if [ -e /usr/local/bin/emailHelper.sh ]; then
+	if [ -e /usr/local/bin/BlueSky/Server/emailHelper.sh ]; then
 		serverFQDN=`cat /usr/local/bin/BlueSky/Server/server.txt`
-		/usr/local/bin/emailHelper.sh "BlueSky Notification $serialNum" "You requested to be notified when we next saw $hostName with serial number $serialNum, ID: $myPort.
+		/usr/local/bin/BlueSky/Server/emailHelper.sh "BlueSky Notification $serialNum" "You requested to be notified when we next saw $hostName with serial number $serialNum, ID: $myPort.
 https://$serverFQDN/blu=$myPort
 SSH bluesky://com.solarwindsmsp.bluesky.admin?blueSkyID=$myPort&user=$myUser&action=ssh
 VNC bluesky://com.solarwindsmsp.bluesky.admin?blueSkyID=$myPort&user=$myUser&action=vnc

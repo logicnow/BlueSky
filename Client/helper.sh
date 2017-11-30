@@ -53,6 +53,13 @@ if [ ! -e "$ourHome/server.plist" ]; then
 	exit 2
 fi
 
+#if BlueSky 1.5 is present, get rid of it
+if [ -e /Library/Mac-MSP/BlueSky/helper.sh ]; then
+  killShells
+  killall autossh
+  echo 'picardAlphaTango' > /Library/Mac-MSP/BlueSky/.getHelp
+fi
+
 if [ -e "$ourHome/.getHelp" ]; then
 	helpWithWhat=`cat "$ourHome/.getHelp"`
 	rm -f "$ourHome/.getHelp"
