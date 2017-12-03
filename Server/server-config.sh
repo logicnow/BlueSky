@@ -99,13 +99,16 @@ sed -i '/HostKey \/etc\/ssh\/ssh_host_ecdsa_key/d' /etc/ssh/sshd_config
 if [[ -z ${IN_DOCKER} ]]; then
 	sed -i 's/Port 22/Port 22\nPort 3122/g' /etc/ssh/sshd_config
 	service sshd restart
+else
+  # disable password authentication for ssh in docker
+  echo 'PasswordAuthentication no' >> /etc/ssh/sshd_config
 fi
 
 ## setup local firewall
 if [[ -z ${IN_DOCKER} ]]; then
 	ufw allow 3122
 	ufw enable
-	ufw allow 80 
+	ufw allow 80
 	ufw allow 443
 fi
 
@@ -156,7 +159,7 @@ a2enmod cgi
 sed -i "s/ServerAdmin webmaster@localhost/ServerAdmin $emailAlertAddress/g" /etc/apache2/sites-enabled/"$apacheConf".conf
 
 #read the top half
-head -n 5 /etc/apache2/sites-enabled/"$apacheConf".conf > /tmp/"$apacheConf".conf 
+head -n 5 /etc/apache2/sites-enabled/"$apacheConf".conf > /tmp/"$apacheConf".conf
 #put this in
 echo "    ServerName $serverFQDN" >> /tmp/"$apacheConf".conf
 if [ "$USE_HTTP" -ne "1" ]; then
@@ -195,9 +198,9 @@ crontab /tmp/mycron
 /usr/local/bin/BlueSky/Server/startGozer.sh
 
 ## setup collector.php
-ln -s /usr/local/bin/BlueSky/Server/collector.php /usr/lib/cgi-bin/collector.php
-chown www-data /usr/local/bin/BlueSky/Server/collector.php 
-chmod 700 /usr/local/bin/BlueSky/Server/collector.php 
+ln -fs /usr/local/bin/BlueSky/Server/collector.php /usr/lib/cgi-bin/collector.php
+chown www-data /usr/local/bin/BlueSky/Server/collector.php
+chmod 700 /usr/local/bin/BlueSky/Server/collector.php
 sed -i "s/CHANGETHIS/$mysqlCollectorPass/g" /usr/lib/cgi-bin/collector.php
 if [[ ${IN_DOCKER} ]]; then
 	sed -i "s/localhost/$MYSQLSERVER/g" /usr/lib/cgi-bin/collector.php
