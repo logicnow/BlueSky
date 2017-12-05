@@ -2,7 +2,7 @@ global sshPid
 global itsGone
 on run
 	
-	set adminLoc to path to resource "blueskyadmin.pub" in bundle (path to me)
+	set adminLoc to path to resource "blueskyclient.pub" in bundle (path to me)
 	set adminPos to POSIX path of adminLoc
 	
 	--do we need to turn on SSH and Screen Sharing?
