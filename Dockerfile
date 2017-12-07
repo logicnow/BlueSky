@@ -42,6 +42,6 @@ RUN mv /usr/local/bin/BlueSky/docker/supervisord.conf /etc/supervisor/conf.d/sup
 
 EXPOSE 80 443 3122
 
-VOLUME ["/certs", "/home/admin/.ssh", "/home/bluesky/.ssh", "/home/admin/newkeys", "/home/bluesky/newkeys", "/tmp/pkg", "/home/ssl/certs", "/home/ssl/private"]
+VOLUME ["/certs", "/home/admin/.ssh", "/home/bluesky/.ssh", "/tmp/pkg", "/home/ssl/certs", "/home/ssl/private"]
 
 CMD ["/usr/local/bin/run"]

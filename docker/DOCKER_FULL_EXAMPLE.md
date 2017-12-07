@@ -29,8 +29,6 @@ These are the local directories for persistent data:
 /var/docker/bluesky/certs
 /var/docker/bluesky/admin.ssh
 /var/docker/bluesky/bluesky.ssh
-/var/docker/bluesky/admin.newkeys
-/var/docker/bluesky/bluesky.newkeys
 /var/docker/caddy
 ```
 
@@ -44,8 +42,6 @@ mkdir -p /var/docker/bluesky/db \
 	/var/docker/bluesky/certs \
 	/var/docker/bluesky/admin.ssh \
 	/var/docker/bluesky/bluesky.ssh \
-	/var/docker/bluesky/admin.newkeys \
-	/var/docker/bluesky/bluesky.newkeys \
 	/var/docker/caddy
 ```
 
@@ -80,8 +76,6 @@ docker run -d --name bluesky \
 	-v /var/docker/bluesky/certs:/certs \
 	-v /var/docker/bluesky/admin.ssh:/home/admin/.ssh \
 	-v /var/docker/bluesky/bluesky.ssh:/home/bluesky/.ssh \
-	-v /var/docker/bluesky/admin.newkeys:/home/admin/newkeys \
-	-v /var/docker/bluesky/bluesky.newkeys:/home/bluesky/newkeys \
 	-p 3122:22 \
 	--restart always \
 	sphen/bluesky

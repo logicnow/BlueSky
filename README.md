@@ -39,10 +39,8 @@ The following locations are mappable locations within the container.  These will
 Path | Note
 --- | ---
 /certs | BlueSky SSH keys
-/home/admin/.ssh | ?
-/home/bluesky/.ssh | ?
-/home/admin/newkeys | ?
-/home/bluesky/newkeys | ?
+/home/admin/.ssh | bluesky admin client public keys
+/home/bluesky/.ssh | bluesky client public keys
 /home/ssl/certs | HTTPS certificate
 /home/ssl/private | HTTPS private key
 /tmp/pkg | Client install pkg
@@ -69,9 +67,7 @@ _you may want to modify permissions depending on how you are running docker_
 ```
 sudo mkdir -p /var/docker/bluesky/certs
 sudo mkdir -p /var/docker/bluesky/admin.ssh
-sudo mkdir -p /var/docker/bluesky/admin.newkeys
 sudo mkdir -p /var/docker/bluesky/bluesky.ssh
-sudo mkdir -p /var/docker/bluesky/bluesky.newkeys
 sudo mkdir -p /var/docker/bluesky/pkg
 sudo mkdir -p /var/docker/bluesky/ssl-certs
 sudo mkdir -p /var/docker/bluesky/ssl-private
@@ -100,8 +96,6 @@ docker run -d --name bluesky \
 	-v /var/docker/bluesky/certs:/certs \
 	-v /var/docker/bluesky/admin.ssh:/home/admin/.ssh \
 	-v /var/docker/bluesky/bluesky.ssh:/home/bluesky/.ssh \
-	-v /var/docker/bluesky/admin.newkeys:/home/admin/newkeys \
-	-v /var/docker/bluesky/bluesky.newkeys:/home/bluesky/newkeys \
 	-v /var/docker/bluesky/ssl-certs:/home/ssl/certs \
 	-v /var/docker/bluesky/ssl-private:/home/ssl/private \
 	-v /var/docker/bluesky/pkg:/tmp/pkg \
