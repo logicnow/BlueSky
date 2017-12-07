@@ -22,14 +22,15 @@ These variables can be overriden when you run the bluesky docker container.
 Variable | Default Value | Note
 --- | --- | ---
 SERVERFQDN | localhost | Bluesky FQDN
-WEBADMINPASS | admin | 
+WEBADMINPASS | admin |
 USE_HTTP | 0 | Set to 1 to use HTTP instead of HTTPS
 MYSQLSERVER | db | IP/DNS of your MySQL server (docker link to db by default)
-MYSQLROOTPASS | admin | 
-EMAILALERT | root@localhost | 
+MYSQLROOTPASS | admin |
+EMAILALERT | root@localhost |
 SMTP_SERVER | | SMTP Server (Required for email alerts) Port optional
 SMTP_AUTH | | SMTP auth user (Required for email alerts)
 SMTP_PASS | | SMTP auth pass (Required for email alerts)
+TIMEZONE | Etc/UTC | Local Timezone [Reference](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 
 ### Docker volumes
 

@@ -32,6 +32,12 @@ if [[ ${IN_DOCKER} ]]; then
 	webAdminPassword=$WEBADMINPASS
 	mysqlRootPass=$MYSQLROOTPASS
 	emailAlertAddress=$EMAILALERT
+  if [[ ${TIMEZONE} ]]; then
+    # set timezone
+    rm /etc/localtime
+    echo ${TIMEZONE} > /etc/timezone
+    dpkg-reconfigure -f noninteractive tzdata
+  fi
 fi
 if [ "$USE_HTTP" -eq "1" ]; then
 	apacheConf="000-default"
