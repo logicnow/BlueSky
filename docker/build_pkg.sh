@@ -6,14 +6,14 @@ APPNAME="BlueSky"
 
 # create folders to work in
 mkdir -p /tmp/pkg
-mkdir /tmp/pkg-flat
-mkdir /tmp/pkg-payload
+mkdir /tmp/pkg-flat 2>/dev/null
+mkdir /tmp/pkg-payload 2>/dev/null
 mkdir /tmp/pkg-scripts
 
 # clean up old files
 rm -rf /tmp/pkg-flat/*
 rm -rf /tmp/pkg-payload/*
-rm -rf /tmp/pkg-payload/.*
+rm -rf /tmp/pkg-payload/.* 2>/dev/null
 rm -rf /tmp/pkg-scripts/*
 rm -rf /tmp/pkg/BlueSky-*.pkg
 
@@ -67,8 +67,9 @@ PKG_LOCATION="/tmp/pkg/${APPNAME}-${VERSION}.pkg"
 ( cd /tmp/pkg-payload && ls4mkbom -u 0 -g 80 . ) > /tmp/pkg/.bom
 ( cd /tmp/pkg-payload && ls4mkbom -u 0 -g 80 .ssh | sed 's/^\./\.\/\.ssh/' ) >> /tmp/pkg/.bom
 mkbom -i /tmp/pkg/.bom /tmp/pkg-flat/Bom
+rm -f /tmp/pkg/.bom
 # pkg it up!!
-( cd /tmp/pkg-flat && xar --compression none -cf "${PKG_LOCATION}" * ) 
+( cd /tmp/pkg-flat && xar --compression none -cf "${PKG_LOCATION}" * )
 echo "osx package has been built: ${PKG_LOCATION}"
 
 RANDOM_DIR=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w ${1:-32} | head -n 1`
