@@ -7,7 +7,7 @@ The main documentation on how to use the bluesky container is in our main [READM
 ### Assumptions for this example
 
 We will be using these docker containers:
-- [mysql/mysql-server:5.7](https://hub.docker.com/r/mysql/mysql-server/)
+- [mysql:5.7](https://hub.docker.com/_/mysql/)
 - [sphen/bluesky](https://hub.docker.com/r/sphen/bluesky/)
 - [abiosoft/caddy](https://hub.docker.com/r/abiosoft/caddy/)
 
@@ -36,7 +36,8 @@ These are the local directories for persistent data:
 
 #### Create the local storage directories
 
-> _Note you may need to set permissions_
+> _Note you may want to set more secure permissions_
+
 ```
 mkdir -p /var/docker/bluesky/db \
 	/var/docker/bluesky/certs \
@@ -47,7 +48,8 @@ mkdir -p /var/docker/bluesky/db \
 
 #### Create MySQL container
 
-> _Note that the MySQL root password is in this command_
+> _Note that the MySQL root password is in this command. If you use a complex password with offending characters you should enclose the password in ''. Passwords do not work with a \ in them_
+
 ```
 docker run -d --name bluesky_db \
 	-v /var/docker/bluesky/db:/var/lib/mysql \
@@ -61,14 +63,14 @@ docker run -d --name bluesky_db \
 
 #### Create BlueSky container
 
-> _Note all the variables that need to change_
+> _Note all the variables that need to change.  If you use complex passwords with offending characters you should enclose the password in ''.  Passwords do not work with a \ in them_
+
 ```
 docker run -d --name bluesky \
 	--link bluesky_db:db \
 	-e USE_HTTP=1 \
 	-e SERVERFQDN=bluesky.example.com \
 	-e WEBADMINPASS=admin \
-	-e MYSQLROOTPASS=admin \
 	-e EMAILALERT=email@example.com \
 	-e SMTP_SERVER=smtp.office365.com:587 \
 	-e SMTP_AUTH=email@example.com \
@@ -84,6 +86,7 @@ docker run -d --name bluesky \
 #### Create Caddyfile
 
 > _Note the first line containing the FQDN and the line starting with `tls` needs to be changed_
+
 ```
 cat <<EOF > /var/docker/caddy/Caddyfile
 bluesky.example.com {

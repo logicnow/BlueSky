@@ -17,7 +17,7 @@ This is an attempt at getting BlueSky to run within docker.  This should allow i
 
 ### Environment variables
 
-These variables can be overriden when you run the bluesky docker container.
+These variables can be overridden when you run the bluesky docker container.
 
 Variable | Default Value | Note
 --- | --- | ---
@@ -25,7 +25,7 @@ SERVERFQDN | localhost | Bluesky FQDN
 WEBADMINPASS | admin |
 USE_HTTP | 0 | Set to 1 to use HTTP instead of HTTPS
 MYSQLSERVER | db | IP/DNS of your MySQL server (docker link to db by default)
-MYSQLROOTPASS | admin |
+MYSQLROOTPASS | admin | Will use root pass from linked docker container if possible
 EMAILALERT | root@localhost |
 SMTP_SERVER | | SMTP Server (Required for email alerts) Port optional
 SMTP_AUTH | | SMTP auth user (Required for email alerts)
@@ -45,14 +45,16 @@ Path | Note
 /home/ssl/private | HTTPS private key
 /tmp/pkg | Client install pkg
 
-### Example Setup: Persistant storage
+### Example Setup: Persistent storage
 
 #### MySQL
 
 Because we are also using MySQL within docker in this example setup, we need to setup the local storage first.  In the example below we are mapping the `/var/docker/bluesky/db` directory on the host to have the persistent mysql data.
 
 First create and set permissions on the local folder:
-_you may want to modify permissions depending on how you are running docker_
+
+> _You may want to modify permissions depending on how you are running docker_
+
 ```
 sudo mkdir -p /var/docker/bluesky/db
 sudo chmod -R 777 /var/docker/bluesky
@@ -63,7 +65,9 @@ sudo chmod -R 777 /var/docker/bluesky
 Because docker images do not keep their data between runs, we need to map locations (volumes) for persistent storage.  In the example below we are mapping various directories within `/var/docker/bluesky/` on the host to have the persistent key data.
 
 First create and set permissions on the local folder:
-_you may want to modify permissions depending on how you are running docker_
+
+> _You may want to modify permissions depending on how you are running docker_
+
 ```
 sudo mkdir -p /var/docker/bluesky/certs
 sudo mkdir -p /var/docker/bluesky/admin.ssh
@@ -77,18 +81,23 @@ sudo chmod -R 777 /var/docker/bluesky
 ### Run BlueSky
 
 Setup MySQL:
-_note that currently the root password is embedded in this command_
+
+> _Note that currently the root password is embedded in this command.  If you use a complex password with offending characters you should enclose the password in ''.  Passwords do not work with a \ in them_
+
 ```
 docker run -d --name bluesky_db \
 	-v /var/docker/bluesky/db:/var/lib/mysql \
 	-e MYSQL_ROOT_HOST=% \
 	-e MYSQL_ROOT_PASSWORD=admin \
-	mysql/mysql-server:5.7
+	mysql:5.7
 ```
 
-Wait for the MySQL docker container to initialize...
+Wait for the MySQL docker container to initialize... This could take a minute.
 
 Setup BlueSky:
+
+> _Note that if you use complex passwords with offending characters you should enclose the password in ''.  Passwords do not work with a \ in them_
+
 ```
 docker run -d --name bluesky \
 	--link bluesky_db:db \
@@ -131,19 +140,20 @@ docker run -d --name bluesky <the rest of your arguments...> sphen/bluesky
 
 ### Troubleshooting
 
-You can get the logs from a container to see if there are any issues:
+You can get the logs from a container to see if there are any issues.  For example:
 ```
+docker logs bluesky_db
 docker logs bluesky
 ```
 
-You can also shell into the bluesky container if needed:
+You can also shell into the bluesky container if needed.  For example:
 ```
 docker exec -it bluesky bash
 ```
 
 ### TODO
 
-- SSH Pub Key auth by default - instructions on setting keys
+- ~~SSH Pub Key auth by default~~ - instructions on setting keys
 - Bring back fail2ban
 - Migration instructions
 
