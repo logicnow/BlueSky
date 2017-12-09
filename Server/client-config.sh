@@ -118,7 +118,7 @@ if [ "$reKey" == "" ]; then
 	# create server.plist
 	hostKey=`ssh-keyscan -t ed25519 localhost | awk '{ print $2,$3 }'`
 	hostKeyRSA=`ssh-keyscan -t rsa localhost | awk '{ print $2,$3 }'`
-	ipAddress=`curl ipinfo.io | grep '"ip":' | awk '{ print $NF }' | tr -d \",`
+	ipAddress=`curl -s http://ipinfo.io/ip`
 	echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
 <plist version=\"1.0\">
@@ -136,7 +136,7 @@ fi
 if [[ ${IN_DOCKER} ]]; then
 	# stop ssh - as we will be starting later
 	/usr/bin/killall sshd
-	
+
 	# lets make an installer pkg!
 	/usr/local/bin/build_pkg.sh
 	/usr/local/bin/build_admin_pkg.sh
