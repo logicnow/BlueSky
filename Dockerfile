@@ -5,11 +5,7 @@ ENV IN_DOCKER=1 \
     SERVERFQDN=localhost \
     MYSQLSERVER=db \
     WEBADMINPASS=admin \
-    MYSQLROOTPASS=admin \
     EMAILALERT=root@localhost
-
-RUN echo "mysql-server mysql-server/root_password password $MYSQLROOTPASS" | debconf-set-selections && \
-	echo "mysql-server mysql-server/root_password_again password $MYSQLROOTPASS" | debconf-set-selections
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y apache2 \
@@ -40,7 +36,7 @@ RUN mv /usr/local/bin/BlueSky/docker/supervisord.conf /etc/supervisor/conf.d/sup
 	mv /usr/local/bin/BlueSky/docker/* /usr/local/bin/ && \
 	chmod +x /usr/local/bin/run /usr/local/bin/build_pkg.sh /usr/local/bin/build_admin_pkg.sh
 
-EXPOSE 80 443 3122
+EXPOSE 22 80 443
 
 VOLUME ["/certs", "/home/admin/.ssh", "/home/bluesky/.ssh", "/tmp/pkg", "/home/ssl/certs", "/home/ssl/private"]
 

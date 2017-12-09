@@ -30,8 +30,23 @@ apacheConf="default-ssl"
 if [[ ${IN_DOCKER} ]]; then
 	serverFQDN=$SERVERFQDN
 	webAdminPassword=$WEBADMINPASS
-	mysqlRootPass=$MYSQLROOTPASS
 	emailAlertAddress=$EMAILALERT
+
+  # take provided mysql root password if we have been provided it.  if not, use the password from the linked container or set to admin
+  if [[ ${MYSQLROOTPASS} ]]; then
+    mysqlRootPass=$MYSQLROOTPASS
+    echo "Setting mysqlRootPass to what was provided"
+  else
+    # lets check for the linked containers password
+    if [[ ${DB_ENV_MYSQL_ROOT_PASSWORD} ]]; then
+      mysqlRootPass=$DB_ENV_MYSQL_ROOT_PASSWORD
+      echo "Setting mysqlRootPass to that of the linked container"
+    else
+      mysqlRootPass="admin"
+      echo "Setting mysqlRootPass to default"
+    fi
+  fi
+  
   if [[ ${TIMEZONE} ]]; then
     # set timezone
     rm /etc/localtime
