@@ -130,7 +130,7 @@ We have a full example setup utilizing Caddy for automatic SSL cert generation [
 To update your BlueSky docker instance it is very simple
 ```
 docker pull sphen/bluesky
-docker rm -f BlueSky
+docker rm -f bluesky
 ```
 
 Then just issue the `docker run` command you originally used to build your specific container!
