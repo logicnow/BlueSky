@@ -24,6 +24,8 @@ RUN apt-get update && \
     cpio \
     netcat \
     swaks \
+    rsyslog \
+    fail2ban \
     libnet-ssleay-perl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
