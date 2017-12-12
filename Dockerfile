@@ -5,7 +5,9 @@ ENV IN_DOCKER=1 \
     SERVERFQDN=localhost \
     MYSQLSERVER=db \
     WEBADMINPASS=admin \
-    EMAILALERT=root@localhost
+    EMAILALERT=root@localhost \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y apache2 \
