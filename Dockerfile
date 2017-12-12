@@ -26,11 +26,12 @@ RUN apt-get update && \
     swaks \
     rsyslog \
     fail2ban \
+    iptables \
     libnet-ssleay-perl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN mkdir /usr/local/bin/BlueSky /var/run/sshd
+RUN mkdir /usr/local/bin/BlueSky /var/run/sshd  /var/run/fail2ban
 
 COPY . /usr/local/bin/BlueSky/
 

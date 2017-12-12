@@ -108,6 +108,7 @@ docker run -d --name bluesky \
 	-v /var/docker/bluesky/ssl-certs:/home/ssl/certs \
 	-v /var/docker/bluesky/ssl-private:/home/ssl/private \
 	-v /var/docker/bluesky/pkg:/tmp/pkg \
+  --cap-add=NET_ADMIN \
 	-p 80:80 \
 	-p 443:443 \
 	-p 3122:22 \
@@ -154,7 +155,7 @@ docker exec -it bluesky bash
 ### TODO
 
 - ~~SSH Pub Key auth by default~~ - instructions on setting keys
-- Bring back fail2ban
+- ~~Bring back fail2ban~~
 - Migration instructions
 
 ### Links

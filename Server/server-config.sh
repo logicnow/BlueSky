@@ -280,7 +280,9 @@ sed -i "s/SERVERFQDN/$serverFQDN/g" /usr/local/bin/BlueSky/Server/sendEmail-whoi
 cp /usr/local/bin/BlueSky/Server/sendEmail-whois-lines.conf /etc/fail2ban/action.d/sendEmail-whois-lines.conf
 sed -i "s/EMAILADDRESS/$emailAlertAddress/g" /usr/local/bin/BlueSky/Server/jail.local
 cp /usr/local/bin/BlueSky/Server/jail.local /etc/fail2ban
-service fail2ban start
+if [[ -z ${IN_DOCKER} ]]; then
+  service fail2ban start
+fi
 
 ## add emailAlertAddress to mysql for alerting
 myQry="update global set defaultemail='$emailAlertAddress'"
