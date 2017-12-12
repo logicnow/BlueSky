@@ -37,6 +37,9 @@ COPY . /usr/local/bin/BlueSky/
 
 RUN mv /usr/local/bin/BlueSky/docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf && \
 	mv /usr/local/bin/BlueSky/docker/* /usr/local/bin/ && \
+	touch /var/log/auth.log && \
+	chown syslog:adm /var/log/auth.log && \
+	chmod 640 /var/log/auth.log && \
 	chmod +x /usr/local/bin/run /usr/local/bin/build_pkg.sh /usr/local/bin/build_admin_pkg.sh
 
 EXPOSE 22 80 443
