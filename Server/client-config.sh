@@ -40,12 +40,12 @@ if [[ ${IN_DOCKER} ]]; then
 	if [ "$(find /certs -maxdepth 1 -type f -not -path '*/\.*')" ]; then
 		# fixup files
 		echo "Putting the provided ssh keys in place..."
-		ln -s /certs/blueskyclient.key /usr/local/bin/BlueSky/Server/
-		ln -s /certs/blueskyclient.pub /usr/local/bin/BlueSky/Client/
-		ln -s /certs/blueskyadmin.key /usr/local/bin/BlueSky/Server/
-		ln -s /certs/blueskyadmin.pub /usr/local/bin/BlueSky/Admin\ Tools/
-		ln -s /certs/blueskyd.pub /usr/local/bin/BlueSky/Server/
-		ln -s /certs/blueskyd /usr/local/bin/BlueSky/Server/
+		ln -fs /certs/blueskyclient.key /usr/local/bin/BlueSky/Server/
+		ln -fs /certs/blueskyclient.pub /usr/local/bin/BlueSky/Client/
+		ln -fs /certs/blueskyadmin.key /usr/local/bin/BlueSky/Server/
+		ln -fs /certs/blueskyadmin.pub /usr/local/bin/BlueSky/Admin\ Tools/
+		ln -fs /certs/blueskyd.pub /usr/local/bin/BlueSky/Server/
+		ln -fs /certs/blueskyd /usr/local/bin/BlueSky/Server/
 		if [[ -f /certs/ssh_host_ed25519_key && -f /certs/ssh_host_ed25519_key.pub && -f /certs/ssh_host_rsa_key && -f /certs/ssh_host_rsa_key.pub ]]; then
 			# host keys exist
 			echo "Re-using host keys..."

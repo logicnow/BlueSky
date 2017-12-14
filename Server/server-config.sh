@@ -46,7 +46,7 @@ if [[ ${IN_DOCKER} ]]; then
       echo "Setting mysqlRootPass to default"
     fi
   fi
-  
+
   if [[ ${TIMEZONE} ]]; then
     # set timezone
     rm /etc/localtime
@@ -164,7 +164,7 @@ chgrp admin /var/log/auth.log
 ## configure apache2
 if [ "$USE_HTTP" -ne "1" ]; then
 	if [[ ${IN_DOCKER} ]]; then
-		if [ -e /etc/ssl/private/ssl-cert-snakeoil.key && -e /etc/ssl/certs/ssl-cert-snakeoil.pem ]; then
+		if [[ -e /etc/ssl/private/ssl-cert-snakeoil.key && -e /etc/ssl/certs/ssl-cert-snakeoil.pem ]]; then
 			# we have an ssl cert coming in
 			echo "We are using the SSL cert provided."
 		else
@@ -289,7 +289,7 @@ myQry="update global set defaultemail='$emailAlertAddress'"
 $myCmd "$myQry"
 
 ## update emailHelper-dist.  You still need to enable it.
-sed -i "s/EMAILADDRESS/$emailAlertAddress/g" /usr/local/bin/BlueSky/Server/emailHelper-dist.sh
+sed -i "s/EMAILADDRESS/$emailAlertAddress/g" /usr/local/bin/BlueSky/Server/emailHelper-dist.sh 2>/dev/null
 
 ## put server fqdn into client config.disabled for proxy routing
 sed -i "s/SERVER/$serverFQDN/g" /usr/local/bin/BlueSky/Client/.ssh/config.disabled
@@ -306,7 +306,7 @@ if [[ -z ${IN_DOCKER} ]]; then
 else
 	if [[ ${SMTP_SERVER} && ${SMTP_AUTH} && ${SMTP_PASS} ]]; then
   	# enable email alerts
-  	mv /usr/local/bin/BlueSky/Server/emailHelper-dist.sh /usr/local/bin/BlueSky/Server/emailHelper.sh
+  	mv /usr/local/bin/BlueSky/Server/emailHelper-dist.sh /usr/local/bin/BlueSky/Server/emailHelper.sh 2>/dev/null
   fi
 fi
 exit 0
