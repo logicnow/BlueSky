@@ -105,8 +105,8 @@ docker run -d --name bluesky \
 	-v /var/docker/bluesky/certs:/certs \
 	-v /var/docker/bluesky/admin.ssh:/home/admin/.ssh \
 	-v /var/docker/bluesky/bluesky.ssh:/home/bluesky/.ssh \
-	-v /var/docker/bluesky/ssl-certs:/home/ssl/certs \
-	-v /var/docker/bluesky/ssl-private:/home/ssl/private \
+	-v /var/docker/bluesky/ssl-certs:/etc/ssl/certs \
+	-v /var/docker/bluesky/ssl-private:/etc/ssl/private \
 	-v /var/docker/bluesky/pkg:/tmp/pkg \
 	-p 80:80 \
 	-p 443:443 \
