@@ -42,7 +42,7 @@ RUN mv /usr/local/bin/BlueSky/docker/supervisord.conf /etc/supervisor/conf.d/sup
 	touch /var/log/auth.log /etc/default/locale && \
 	chown syslog:adm /var/log/auth.log && \
 	chmod 640 /var/log/auth.log && \
-	chmod +x /usr/local/bin/run /usr/local/bin/build_pkg.sh /usr/local/bin/build_admin_pkg.sh
+	chmod +x /usr/local/bin/run /usr/local/bin/fail2ban-supervisor.sh /usr/local/bin/build_pkg.sh /usr/local/bin/build_admin_pkg.sh
 
 EXPOSE 22 80 443
 

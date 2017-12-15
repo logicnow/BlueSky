@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# run bluesky server config
 /usr/local/bin/BlueSky/Server/server-config.sh
 
+# purge hanging sockets/pids
+rm -f /var/run/fail2ban/*
+
+# start it up
 exec supervisord -n -c /etc/supervisor/conf.d/supervisord.conf
