@@ -41,8 +41,8 @@ Path | Note
 /certs | BlueSky SSH keys
 /home/admin/.ssh | bluesky admin client public keys
 /home/bluesky/.ssh | bluesky client public keys
-/home/ssl/certs | HTTPS certificate
-/home/ssl/private | HTTPS private key
+/etc/ssl/certs | HTTPS certificate
+/etc/ssl/private | HTTPS private key
 /tmp/pkg | Client install pkg
 
 ### Example Setup: Persistent storage
@@ -108,6 +108,7 @@ docker run -d --name bluesky \
 	-v /var/docker/bluesky/ssl-certs:/etc/ssl/certs \
 	-v /var/docker/bluesky/ssl-private:/etc/ssl/private \
 	-v /var/docker/bluesky/pkg:/tmp/pkg \
+  --cap-add=NET_ADMIN \
 	-p 80:80 \
 	-p 443:443 \
 	-p 3122:22 \
@@ -117,7 +118,7 @@ docker run -d --name bluesky \
 ### HTTPS SSL Certificate Setup
 
 If you are opting to use HTTPS within the docker container you should map in valid SSL certificates.  By default with no action, the container will generate a self-signed certificate.  If you have a valid `pem` and `key` file that you would like to use, we expect a few things:
-- You are mapping the `/home/ssl/certs` and `/home/ssl/private` volumes
+- You are mapping the `/etc/ssl/certs` and `/etc/ssl/private` volumes
 - The pem file to use within certs is named `ssl-cert-snakeoil.pem`
 - The key file to use within private is name `ssl-cert-snakeoil.key`
 
@@ -154,7 +155,7 @@ docker exec -it bluesky bash
 ### TODO
 
 - ~~SSH Pub Key auth by default~~ - instructions on setting keys
-- Bring back fail2ban
+- ~~Bring back fail2ban~~
 - Migration instructions
 
 ### Links
