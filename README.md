@@ -24,6 +24,7 @@ Variable | Default Value | Note
 SERVERFQDN | localhost | Bluesky FQDN
 WEBADMINPASS | admin |
 USE_HTTP | 0 | Set to 1 to use HTTP instead of HTTPS
+FAIL2BAN | 1 | Set to 0 to disable fail2ban
 MYSQLSERVER | db | IP/DNS of your MySQL server (docker link to db by default)
 MYSQLROOTPASS | admin | Will use root pass from linked docker container if possible
 EMAILALERT | root@localhost |
@@ -108,12 +109,14 @@ docker run -d --name bluesky \
 	-v /var/docker/bluesky/ssl-certs:/home/ssl/certs \
 	-v /var/docker/bluesky/ssl-private:/home/ssl/private \
 	-v /var/docker/bluesky/pkg:/tmp/pkg \
-  --cap-add=NET_ADMIN \
+	--cap-add=NET_ADMIN \
 	-p 80:80 \
 	-p 443:443 \
 	-p 3122:22 \
 	sphen/bluesky
 ```
+
+> _The `--cap-add=NET_ADMIN` argument is only needed if using fail2ban (default)_
 
 ### HTTPS SSL Certificate Setup
 

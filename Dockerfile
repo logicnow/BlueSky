@@ -2,6 +2,7 @@ FROM ubuntu:16.04
 
 ENV IN_DOCKER=1 \
     USE_HTTP=0 \
+    FAIL2BAN=1 \
     SERVERFQDN=localhost \
     MYSQLSERVER=db \
     WEBADMINPASS=admin \
