@@ -24,7 +24,7 @@ cp /tmp/pkg-payload/server.txt /tmp/pkg-payload/BlueSky\ Admin.app/Contents/Reso
 cp /tmp/pkg-payload/server.txt /tmp/pkg-payload/BlueSky\ Temporary\ Client.app/Contents/Resources/
 cp /tmp/pkg-payload/blueskyadmin.pub /tmp/pkg-payload/BlueSky\ Admin\ Setup.app/Contents/Resources/
 cp /tmp/pkg-payload/blueskyadmin.pub /tmp/pkg-payload/BlueSky\ Admin.app/Contents/Resources/
-cp /tmp/pkg-payload/blueskyadmin.pub /tmp/pkg-payload/BlueSky\ Temporary\ Client.app/Contents/Resources/
+cp -L /usr/local/bin/BlueSky/Client/blueskyclient.pub /tmp/pkg-payload/BlueSky\ Temporary\ Client.app/Contents/Resources/
 rm /tmp/pkg-payload/server.txt /tmp/pkg-payload/blueskyadmin.pub
 
 # get info about our payload
