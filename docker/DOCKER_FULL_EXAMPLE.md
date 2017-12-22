@@ -78,6 +78,7 @@ docker run -d --name bluesky \
 	-v /var/docker/bluesky/certs:/certs \
 	-v /var/docker/bluesky/admin.ssh:/home/admin/.ssh \
 	-v /var/docker/bluesky/bluesky.ssh:/home/bluesky/.ssh \
+	--cap-add=NET_ADMIN \
 	-p 3122:22 \
 	--restart always \
 	sphen/bluesky

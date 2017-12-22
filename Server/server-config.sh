@@ -276,12 +276,12 @@ myQry="grant select on BlueSky.computers to 'collector'@'$mysqlHostSecurity';"
 $myCmd "$myQry"
 
 ## fail2ban conf
+sed -i "s/SERVERFQDN/$serverFQDN/g" /usr/local/bin/BlueSky/Server/sendEmail-whois-lines.conf
+cp /usr/local/bin/BlueSky/Server/sendEmail-whois-lines.conf /etc/fail2ban/action.d/sendEmail-whois-lines.conf
+sed -i "s/EMAILADDRESS/$emailAlertAddress/g" /usr/local/bin/BlueSky/Server/jail.local
+cp /usr/local/bin/BlueSky/Server/jail.local /etc/fail2ban
 if [[ -z ${IN_DOCKER} ]]; then
-	sed -i "s/SERVERFQDN/$serverFQDN/g" /usr/local/bin/BlueSky/Server/sendEmail-whois-lines.conf
-	cp /usr/local/bin/BlueSky/Server/sendEmail-whois-lines.conf /etc/fail2ban/action.d/sendEmail-whois-lines.conf
-	sed -i "s/EMAILADDRESS/$emailAlertAddress/g" /usr/local/bin/BlueSky/Server/jail.local
-	cp /usr/local/bin/BlueSky/Server/jail.local /etc/fail2ban
-	service fail2ban start
+  service fail2ban start
 fi
 
 ## add emailAlertAddress to mysql for alerting
