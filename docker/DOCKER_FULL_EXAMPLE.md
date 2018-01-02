@@ -63,7 +63,7 @@ docker run -d --name bluesky_db \
 
 #### Create BlueSky container
 
-> **Note:** _All the variables that need to change.  If you use complex passwords with offending characters you should enclose the password in ''.  Passwords do not work with a backslash in them_
+> **Note:** _All the variables that need to change.  If you use complex passwords with offending characters you should enclose the password in single quotes.  Passwords do not work with a backslash in them_
 
 > **Note:** _We do not care about SSL certs here as the Caddy container will take care of that_
 
