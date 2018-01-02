@@ -63,12 +63,13 @@ docker run -d --name bluesky_db \
 
 #### Create BlueSky container
 
-> _Note all the variables that need to change.  If you use complex passwords with offending characters you should enclose the password in ''.  Passwords do not work with a \ in them_
+> **Note:** _All the variables that need to change.  If you use complex passwords with offending characters you should enclose the password in ''.  Passwords do not work with a backslash in them_
+
+> **Note:** _We do not care about SSL certs here as the Caddy container will take care of that_
 
 ```
 docker run -d --name bluesky \
 	--link bluesky_db:db \
-	-e USE_HTTP=1 \
 	-e SERVERFQDN=bluesky.example.com \
 	-e WEBADMINPASS=admin \
 	-e EMAILALERT=email@example.com \
@@ -86,13 +87,16 @@ docker run -d --name bluesky \
 
 #### Create Caddyfile
 
-> _Note the first line containing the FQDN and the line starting with `tls` needs to be changed_
+> **Note:** _The first line containing the FQDN and the line starting with `tls` needs to be changed._
+
+> _We also are specifically passing through via https in order to keep sanity in the appgini framework.  Without proxying to https the will be some pages that redirect back to http.  Because of this we also use the `insecure_skip_verify` option as the bluesky cert will be self signed for internal traffic.  If anyone else has any bright ideas on how to avoid this let me know_
 
 ```
 cat <<EOF > /var/docker/caddy/Caddyfile
 bluesky.example.com {
-	proxy / bluesky:80 {
+	proxy / https://bluesky {
 		transparent
+		insecure_skip_verify
 	}
 	tls email@example.com
 }
