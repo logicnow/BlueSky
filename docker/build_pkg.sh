@@ -1,6 +1,5 @@
 #!/bin/bash
 
-VERSION="1.0"
 IDENTIFIER="com.solarwindsmsp.bluesky.pkg"
 APPNAME="BlueSky"
 
@@ -26,7 +25,7 @@ INSTALL_KB_SIZE=$(du -k -s /tmp/pkg-payload | awk '{print $1}')
 # write out the PackageInfo file to flat pkg location
 cat <<EOF > /tmp/pkg-flat/PackageInfo
 <?xml version="1.0" encoding="utf-8"?>
-<pkg-info postinstall-action="none" format-version="2" identifier="${IDENTIFIER}" version="${VERSION}" generator-version="InstallCmds-611 (16G1036)" install-location="/var/bluesky" auth="root">
+<pkg-info postinstall-action="none" format-version="2" identifier="${IDENTIFIER}" version="${BLUESKY_VERSION}" generator-version="InstallCmds-611 (16G1036)" install-location="/var/bluesky" auth="root">
     <payload numberOfFiles="${NUM_FILES}" installKBytes="${INSTALL_KB_SIZE}"/>
     <bundle-version/>
     <upgrade-bundle/>
@@ -57,7 +56,7 @@ EOF
 # make sure they are executed
 chmod +x /tmp/pkg-scripts/*
 
-PKG_LOCATION="/tmp/pkg/${APPNAME}-${VERSION}.pkg"
+PKG_LOCATION="/tmp/pkg/${APPNAME}-${BLUESKY_VERSION}.pkg"
 
 # compress the scripts
 ( cd /tmp/pkg-scripts && find . | cpio -o --format odc --owner 0:80 | gzip -c ) > /tmp/pkg-flat/Scripts
@@ -82,5 +81,5 @@ if(in_array(\$mi['group'], array('Admins', 'Data entry'))){
 ?>
 <div id="top_buttons" class="hidden-print">
 	<div class="btn-group btn-group-lg visible-md visible-lg all_records pull-left">
-		<button onClick="window.location='${RANDOM_DIR}/${APPNAME}-${VERSION}.pkg';" class="btn btn-default"><i class="glyphicon glyphicon-download-alt"></i> Download BlueSky Agent</button>
+		<button onClick="window.location='${RANDOM_DIR}/${APPNAME}-${BLUESKY_VERSION}.pkg';" class="btn btn-default"><i class="glyphicon glyphicon-download-alt"></i> Download BlueSky Agent</button>
 EOF
