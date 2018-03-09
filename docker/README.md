@@ -37,7 +37,7 @@ Path | Note
 /home/bluesky/.ssh | BlueSky client public keys
 /tmp/pkg | Client install pkg
 
-### Example Setup: Persistent storage
+### Setting up Persistent Storage
 
 #### MySQL
 
@@ -65,8 +65,6 @@ sudo mkdir -p /var/docker/bluesky/certs
 sudo mkdir -p /var/docker/bluesky/admin.ssh
 sudo mkdir -p /var/docker/bluesky/bluesky.ssh
 sudo mkdir -p /var/docker/bluesky/pkg
-sudo mkdir -p /var/docker/bluesky/ssl-certs
-sudo mkdir -p /var/docker/bluesky/ssl-private
 sudo chmod -R 777 /var/docker/bluesky
 ```
 
