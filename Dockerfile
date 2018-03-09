@@ -8,7 +8,8 @@ ENV IN_DOCKER=1 \
     WEBADMINPASS=admin \
     EMAILALERT=root@localhost \
     LANG=C.UTF-8 \
-    LC_ALL=C.UTF-8
+    LC_ALL=C.UTF-8 \
+    BLUESKY_VERSION=2.1
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y apache2 \
@@ -43,10 +44,11 @@ RUN mv /usr/local/bin/BlueSky/docker/supervisord.conf /etc/supervisor/conf.d/sup
 	touch /var/log/auth.log /etc/default/locale && \
 	chown syslog:adm /var/log/auth.log && \
 	chmod 640 /var/log/auth.log && \
-	chmod +x /usr/local/bin/run /usr/local/bin/fail2ban-supervisor.sh /usr/local/bin/build_pkg.sh /usr/local/bin/build_admin_pkg.sh
+	chmod +x /usr/local/bin/run /usr/local/bin/fail2ban-supervisor.sh /usr/local/bin/build_pkg.sh /usr/local/bin/build_admin_pkg.sh && \
+	echo "ServerName CHANGETHIS" >> /etc/apache2/apache2.conf
 
 EXPOSE 22 80 443
 
-VOLUME ["/certs", "/home/admin/.ssh", "/home/bluesky/.ssh", "/tmp/pkg", "/etc/ssl/certs", "/etc/ssl/private"]
+VOLUME ["/certs", "/home/admin/.ssh", "/home/bluesky/.ssh", "/tmp/pkg"]
 
 CMD ["/usr/local/bin/run"]

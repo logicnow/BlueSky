@@ -123,6 +123,7 @@ if [[ -z ${IN_DOCKER} ]]; then
 else
   # disable password authentication for ssh in docker
   echo 'PasswordAuthentication no' >> /etc/ssh/sshd_config
+	echo 'ChallengeResponseAuthentication no' >> /etc/ssh/sshd_config
 fi
 
 ## setup local firewall
@@ -164,14 +165,17 @@ chgrp admin /var/log/auth.log
 ## configure apache2
 if [ "$USE_HTTP" -ne "1" ]; then
 	if [[ ${IN_DOCKER} ]]; then
-		if [[ -e /etc/ssl/private/ssl-cert-snakeoil.key && -e /etc/ssl/certs/ssl-cert-snakeoil.pem ]]; then
+		if [[ -f /certs/${SSL_CERT} && -f /certs/${SSL_KEY} ]]; then
 			# we have an ssl cert coming in
 			echo "We are using the SSL cert provided."
+			ln -fs /certs/${SSL_CERT} /etc/ssl/certs/ssl-cert-snakeoil.pem
+			ln -fs /certs/${SSL_KEY} /etc/ssl/private/ssl-cert-snakeoil.key
 		else
 			# throw in self signed cert
 			echo "Generating self-signed SSL cert."
 			openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/ssl-cert-snakeoil.key -out /etc/ssl/certs/ssl-cert-snakeoil.pem -subj "/C=US/ST=Somewhere/L=Somewhere/O=BlueSky/OU=Development/CN=$SERVERFQDN"
 		fi
+		sed -i "s/CHANGETHIS/$serverFQDN/g" /etc/apache2/apache2.conf
 	fi
 	a2enmod ssl
 	a2ensite default-ssl

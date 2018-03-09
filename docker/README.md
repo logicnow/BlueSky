@@ -8,13 +8,15 @@ We have a full example setup utilizing Caddy for automatic SSL cert generation [
 
 ### Environment variables
 
-These variables can be overridden when you run the bluesky docker container.
+These variables can be overridden when you run the BlueSky docker container.
 
 Variable | Default Value | Note
 --- | --- | ---
-SERVERFQDN | localhost | Bluesky FQDN
+SERVERFQDN | localhost | BlueSky FQDN
 WEBADMINPASS | admin |
 USE_HTTP | 0 | Set to 1 to use HTTP instead of HTTPS
+SSL_CERT | | Filename referring to your ssl cert file in /certs
+SSL_KEY | | Filename referring to your ssl key file in /certs
 FAIL2BAN | 1 | Set to 0 to disable fail2ban
 MYSQLSERVER | db | IP/DNS of your MySQL server (docker link to db by default)
 MYSQLROOTPASS | admin | Will use root pass from linked docker container if possible
@@ -30,11 +32,9 @@ The following locations are mappable locations within the container.  These will
 
 Path | Note
 --- | ---
-/certs | BlueSky SSH keys
-/home/admin/.ssh | bluesky admin client public keys
-/home/bluesky/.ssh | bluesky client public keys
-/etc/ssl/certs | HTTPS certificate
-/etc/ssl/private | HTTPS private key
+/certs | BlueSky SSH keys & SSL cert
+/home/admin/.ssh | BlueSky admin client public keys
+/home/bluesky/.ssh | BlueSky client public keys
 /tmp/pkg | Client install pkg
 
 ### Example Setup: Persistent storage
@@ -94,11 +94,11 @@ Setup BlueSky:
 docker run -d --name bluesky \
 	--link bluesky_db:db \
 	-e SERVERFQDN=bluesky.example.com \
+	-e SSL_CERT=bluesky.example.com.crt \
+	-e SSL_KEY=bluesky.example.com.key \
 	-v /var/docker/bluesky/certs:/certs \
 	-v /var/docker/bluesky/admin.ssh:/home/admin/.ssh \
 	-v /var/docker/bluesky/bluesky.ssh:/home/bluesky/.ssh \
-	-v /var/docker/bluesky/ssl-certs:/etc/ssl/certs \
-	-v /var/docker/bluesky/ssl-private:/etc/ssl/private \
 	-v /var/docker/bluesky/pkg:/tmp/pkg \
 	--cap-add=NET_ADMIN \
 	-p 80:80 \
@@ -111,10 +111,11 @@ docker run -d --name bluesky \
 
 ### HTTPS SSL Certificate Setup
 
-If you are opting to use HTTPS within the docker container you should map in valid SSL certificates.  By default with no action, the container will generate a self-signed certificate.  If you have a valid `pem` and `key` file that you would like to use, we expect a few things:
-- You are mapping the `/etc/ssl/certs` and `/etc/ssl/private` volumes
-- The pem file to use within certs is named `ssl-cert-snakeoil.pem`
-- The key file to use within private is name `ssl-cert-snakeoil.key`
+If you are opting to use valid HTTPS within the docker container you need to map in valid SSL certificates.  By default with no action, the container will generate a self-signed certificate.  If you have a valid `pem` and `key` file that you would like to use, we expect a few things:
+- You are mapping the `/certs` volume
+- The `SSL_CERT` environment variable is set to the file name of your cert
+- The `SSL_KEY` environment variable is set to the file name of your key
+Keep in mind if you have a chain certificate you should combine the entire chain into a single `pem` file.
 
 ### Upgrading BlueSky Server
 
@@ -137,16 +138,10 @@ docker logs bluesky_db
 docker logs bluesky
 ```
 
-You can also shell into the bluesky container if needed.  For example:
+You can also shell into the BlueSky container if needed.  For example:
 ```
 docker exec -it bluesky bash
 ```
-
-### TODO
-
-- ~~SSH Pub Key auth by default~~ - instructions on setting keys
-- ~~Bring back fail2ban~~
-- Migration instructions
 
 ### Links
 
