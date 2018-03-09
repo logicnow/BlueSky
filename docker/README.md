@@ -76,10 +76,10 @@ Setup MySQL:
 
 ```
 docker run -d --name bluesky_db \
-	-v /var/docker/bluesky/db:/var/lib/mysql \
-	-e MYSQL_ROOT_HOST=% \
-	-e MYSQL_ROOT_PASSWORD=admin \
-	mysql:5.7
+  -v /var/docker/bluesky/db:/var/lib/mysql \
+  -e MYSQL_ROOT_HOST=% \
+  -e MYSQL_ROOT_PASSWORD=admin \
+  mysql:5.7
 ```
 
 Wait for the MySQL docker container to initialize... This could take a minute.
@@ -90,19 +90,19 @@ Setup BlueSky:
 
 ```
 docker run -d --name bluesky \
-	--link bluesky_db:db \
-	-e SERVERFQDN=bluesky.example.com \
-	-e SSL_CERT=bluesky.example.com.crt \
-	-e SSL_KEY=bluesky.example.com.key \
-	-v /var/docker/bluesky/certs:/certs \
-	-v /var/docker/bluesky/admin.ssh:/home/admin/.ssh \
-	-v /var/docker/bluesky/bluesky.ssh:/home/bluesky/.ssh \
-	-v /var/docker/bluesky/pkg:/tmp/pkg \
-	--cap-add=NET_ADMIN \
-	-p 80:80 \
-	-p 443:443 \
-	-p 3122:22 \
-	sphen/bluesky
+  --link bluesky_db:db \
+  -e SERVERFQDN=bluesky.example.com \
+  -e SSL_CERT=bluesky.example.com.crt \
+  -e SSL_KEY=bluesky.example.com.key \
+  -v /var/docker/bluesky/certs:/certs \
+  -v /var/docker/bluesky/admin.ssh:/home/admin/.ssh \
+  -v /var/docker/bluesky/bluesky.ssh:/home/bluesky/.ssh \
+  -v /var/docker/bluesky/pkg:/tmp/pkg \
+  --cap-add=NET_ADMIN \
+  -p 80:80 \
+  -p 443:443 \
+  -p 3122:22 \
+  sphen/bluesky
 ```
 
 > _The `--cap-add=NET_ADMIN` argument is only needed if using fail2ban (default)_

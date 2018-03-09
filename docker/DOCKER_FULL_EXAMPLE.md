@@ -40,10 +40,10 @@ These are the local directories for persistent data:
 
 ```
 mkdir -p /var/docker/bluesky/db \
-	/var/docker/bluesky/certs \
-	/var/docker/bluesky/admin.ssh \
-	/var/docker/bluesky/bluesky.ssh \
-	/var/docker/caddy
+  /var/docker/bluesky/certs \
+  /var/docker/bluesky/admin.ssh \
+  /var/docker/bluesky/bluesky.ssh \
+  /var/docker/caddy
 ```
 
 #### Create MySQL container
@@ -52,11 +52,11 @@ mkdir -p /var/docker/bluesky/db \
 
 ```
 docker run -d --name bluesky_db \
-	-v /var/docker/bluesky/db:/var/lib/mysql \
-	-e MYSQL_ROOT_HOST=% \
-	-e MYSQL_ROOT_PASSWORD=admin \
-	--restart always \
-	mysql/mysql-server:5.7
+  -v /var/docker/bluesky/db:/var/lib/mysql \
+  -e MYSQL_ROOT_HOST=% \
+  -e MYSQL_ROOT_PASSWORD=admin \
+  --restart always \
+  mysql/mysql-server:5.7
 ```
 
 **Wait a minute or two for the MySQL container to initialize.** You can get the status of the container by running `docker ps -a`.  Wait until you see it with a status of **(healthy)**
@@ -69,20 +69,20 @@ docker run -d --name bluesky_db \
 
 ```
 docker run -d --name bluesky \
-	--link bluesky_db:db \
-	-e SERVERFQDN=bluesky.example.com \
-	-e WEBADMINPASS=admin \
-	-e EMAILALERT=email@example.com \
-	-e SMTP_SERVER=smtp.office365.com:587 \
-	-e SMTP_AUTH=email@example.com \
-	-e SMTP_PASS=yourpassword \
-	-v /var/docker/bluesky/certs:/certs \
-	-v /var/docker/bluesky/admin.ssh:/home/admin/.ssh \
-	-v /var/docker/bluesky/bluesky.ssh:/home/bluesky/.ssh \
-	--cap-add=NET_ADMIN \
-	-p 3122:22 \
-	--restart always \
-	sphen/bluesky
+  --link bluesky_db:db \
+  -e SERVERFQDN=bluesky.example.com \
+  -e WEBADMINPASS=admin \
+  -e EMAILALERT=email@example.com \
+  -e SMTP_SERVER=smtp.office365.com:587 \
+  -e SMTP_AUTH=email@example.com \
+  -e SMTP_PASS=yourpassword \
+  -v /var/docker/bluesky/certs:/certs \
+  -v /var/docker/bluesky/admin.ssh:/home/admin/.ssh \
+  -v /var/docker/bluesky/bluesky.ssh:/home/bluesky/.ssh \
+  --cap-add=NET_ADMIN \
+  -p 3122:22 \
+  --restart always \
+  sphen/bluesky
 ```
 
 #### Create Caddyfile
@@ -94,11 +94,11 @@ docker run -d --name bluesky \
 ```
 cat <<EOF > /var/docker/caddy/Caddyfile
 bluesky.example.com {
-	proxy / https://bluesky {
-		transparent
-		insecure_skip_verify
-	}
-	tls email@example.com
+  proxy / https://bluesky {
+    transparent
+    insecure_skip_verify
+  }
+  tls email@example.com
 }
 EOF
 ```
@@ -107,11 +107,11 @@ EOF
 
 ```
 docker run -d --name caddy \
-    -p 80:80 \
-    -p 443:443 \
-    --link bluesky:bluesky \
-    -v /var/docker/caddy/Caddyfile:/etc/Caddyfile \
-    -v /var/docker/caddy:/root/.caddy \
-    --restart always \
-    abiosoft/caddy
+  -p 80:80 \
+  -p 443:443 \
+  --link bluesky:bluesky \
+  -v /var/docker/caddy/Caddyfile:/etc/Caddyfile \
+  -v /var/docker/caddy:/root/.caddy \
+  --restart always \
+  abiosoft/caddy
 ```
