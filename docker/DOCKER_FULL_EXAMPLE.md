@@ -115,8 +115,3 @@ docker run -d --name caddy \
     --restart always \
     abiosoft/caddy
 ```
-
-### TODO
-
-- Set up bluesky to wait for mysql
-- docker compose example?
