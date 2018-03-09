@@ -1,5 +1,28 @@
 #!/bin/bash
 
+# wait for database
+COUNT=0
+while [ $COUNT -le 30 ]
+do
+	sleep 1;
+	COUNT=$((COUNT+1));
+
+  MYSQL_IS_RUNNING=`mysqladmin -h db -u root -padmin status 2>1 /dev/null | grep Uptime`
+
+  if [[ -z ${MYSQL_IS_RUNNING} ]]; then
+    if [ $COUNT -gt 30 ]; then
+      echo "We failed to connect to the database, exiting..."
+      exit 1;
+    fi
+    echo "Waiting for the database to start.  Attempt $COUNT..."
+  else
+    echo "Database is running..."
+    break
+  fi
+done
+
+mysqladmin -h db -u root -padmin status 2>1 /dev/null
+
 # run bluesky server config
 /usr/local/bin/BlueSky/Server/server-config.sh
 
