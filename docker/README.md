@@ -113,6 +113,7 @@ If you are opting to use valid HTTPS within the docker container you need to map
 - You are mapping the `/certs` volume
 - The `SSL_CERT` environment variable is set to the file name of your cert
 - The `SSL_KEY` environment variable is set to the file name of your key
+
 Keep in mind if you have a chain certificate you should combine the entire chain into a single `pem` file.
 
 ### Upgrading BlueSky Server
