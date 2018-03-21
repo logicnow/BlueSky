@@ -28,9 +28,9 @@ emailAlertAddress=""
 # --------- DO NOT EDIT BELOW ------------------------------------------------------
 apacheConf="default-ssl"
 if [[ ${IN_DOCKER} ]]; then
-	serverFQDN=$SERVERFQDN
-	webAdminPassword=$WEBADMINPASS
-	emailAlertAddress=$EMAILALERT
+  serverFQDN=$SERVERFQDN
+  webAdminPassword=$WEBADMINPASS
+  emailAlertAddress=$EMAILALERT
 
   # take provided mysql root password if we have been provided it.  if not, use the password from the linked container or set to admin
   if [[ ${MYSQLROOTPASS} ]]; then
@@ -55,47 +55,47 @@ if [[ ${IN_DOCKER} ]]; then
   fi
 fi
 if [ "$USE_HTTP" -eq "1" ]; then
-	apacheConf="000-default"
+  apacheConf="000-default"
 fi
 
 ## ask for blank variables
 
 if [ "$serverFQDN" == "" ]; then
-	echo "Please enter a fully qualified domain name for this server."
-	read serverFQDN
-	if [ "$serverFQDN" == "" ]; then
-		echo "This value cannot be empty. Please try again."
-		exit 2
-	fi
+  echo "Please enter a fully qualified domain name for this server."
+  read serverFQDN
+  if [ "$serverFQDN" == "" ]; then
+    echo "This value cannot be empty. Please try again."
+    exit 2
+  fi
 fi
 if [ "$webAdminPassword" == "" ]; then
-	echo "Please enter a password for logging into the web admin."
-	read webAdminPassword
-	if [ "$webAdminPassword" == "" ]; then
-		echo "This value cannot be empty. Please try again."
-		exit 2
-	fi
-	echo "Please enter the password again."
-	read webPassConf
-	if [ "$webAdminPassword" != "$webPassConf" ]; then
-		echo "Sorry the passwords don't match. Please try again."
-		exit 2
-	fi
+  echo "Please enter a password for logging into the web admin."
+  read webAdminPassword
+  if [ "$webAdminPassword" == "" ]; then
+    echo "This value cannot be empty. Please try again."
+    exit 2
+  fi
+  echo "Please enter the password again."
+  read webPassConf
+  if [ "$webAdminPassword" != "$webPassConf" ]; then
+    echo "Sorry the passwords don't match. Please try again."
+    exit 2
+  fi
 fi
 if [ "$emailAlertAddress" == "" ]; then
-	echo "Please enter an email address where you will receive alerts."
-	read emailAlertAddress
-	if [ "$emailAlertAddress" == "" ]; then
-		echo "This value cannot be empty. Please try again."
-		exit 2
-	fi
+  echo "Please enter an email address where you will receive alerts."
+  read emailAlertAddress
+  if [ "$emailAlertAddress" == "" ]; then
+    echo "This value cannot be empty. Please try again."
+    exit 2
+  fi
 fi
 if [ "$mysqlRootPass" == "" ]; then
-	echo "Please enter a root password for MySQL. Leave it blank and we'll generate one."
-	read mysqlRootPass
-	if [ "$mysqlRootPass" == "" ]; then
-		mysqlRootPass=`tr -dc A-Za-z0-9 < /dev/urandom | head -c 48 | xargs`
-	fi
+  echo "Please enter a root password for MySQL. Leave it blank and we'll generate one."
+  read mysqlRootPass
+  if [ "$mysqlRootPass" == "" ]; then
+    mysqlRootPass=`tr -dc A-Za-z0-9 < /dev/urandom | head -c 48 | xargs`
+  fi
 fi
 
 ## variables no one will care about
@@ -118,28 +118,28 @@ echo 'MACs hmac-sha2-512-etm@openssh.com,hmac-ripemd160' >> /etc/ssh/sshd_config
 sed -i '/HostKey \/etc\/ssh\/ssh_host_dsa_key/d' /etc/ssh/sshd_config
 sed -i '/HostKey \/etc\/ssh\/ssh_host_ecdsa_key/d' /etc/ssh/sshd_config
 if [[ -z ${IN_DOCKER} ]]; then
-	sed -i 's/Port 22/Port 22\nPort 3122/g' /etc/ssh/sshd_config
-	service sshd restart
+  sed -i 's/Port 22/Port 22\nPort 3122/g' /etc/ssh/sshd_config
+  service sshd restart
 else
   # disable password authentication for ssh in docker
   echo 'PasswordAuthentication no' >> /etc/ssh/sshd_config
-	echo 'ChallengeResponseAuthentication no' >> /etc/ssh/sshd_config
+  echo 'ChallengeResponseAuthentication no' >> /etc/ssh/sshd_config
 fi
 
 ## setup local firewall
 if [[ -z ${IN_DOCKER} ]]; then
-	ufw allow 3122
-	ufw enable
-	ufw allow 80
-	ufw allow 443
+  ufw allow 3122
+  ufw enable
+  ufw allow 80
+  ufw allow 443
 fi
 
 ## install software
 if [[ -z ${IN_DOCKER} ]]; then
-	apt-get update
-	sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password $mysqlRootPass"
-	sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $mysqlRootPass"
-	apt-get -y install apache2 fail2ban mysql-server php-mysql php libapache2-mod-php php-mcrypt php-mysql inoticoming swaks curl
+  apt-get update
+  sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password $mysqlRootPass"
+  sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $mysqlRootPass"
+  apt-get -y install apache2 fail2ban mysql-server php-mysql php libapache2-mod-php php-mcrypt php-mysql inoticoming swaks curl
 fi
 
 ## setup user accounts/folders
@@ -164,21 +164,21 @@ chgrp admin /var/log/auth.log
 
 ## configure apache2
 if [ "$USE_HTTP" -ne "1" ]; then
-	if [[ ${IN_DOCKER} ]]; then
-		if [[ -f /certs/${SSL_CERT} && -f /certs/${SSL_KEY} ]]; then
-			# we have an ssl cert coming in
-			echo "We are using the SSL cert provided."
-			ln -fs /certs/${SSL_CERT} /etc/ssl/certs/ssl-cert-snakeoil.pem
-			ln -fs /certs/${SSL_KEY} /etc/ssl/private/ssl-cert-snakeoil.key
-		else
-			# throw in self signed cert
-			echo "Generating self-signed SSL cert."
-			openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/ssl-cert-snakeoil.key -out /etc/ssl/certs/ssl-cert-snakeoil.pem -subj "/C=US/ST=Somewhere/L=Somewhere/O=BlueSky/OU=Development/CN=$SERVERFQDN"
-		fi
-		sed -i "s/CHANGETHIS/$serverFQDN/g" /etc/apache2/apache2.conf
-	fi
-	a2enmod ssl
-	a2ensite default-ssl
+  if [[ ${IN_DOCKER} ]]; then
+    if [[ -f /certs/${SSL_CERT} && -f /certs/${SSL_KEY} ]]; then
+      # we have an ssl cert coming in
+      echo "We are using the SSL cert provided."
+      ln -fs /certs/${SSL_CERT} /etc/ssl/certs/ssl-cert-snakeoil.pem
+      ln -fs /certs/${SSL_KEY} /etc/ssl/private/ssl-cert-snakeoil.key
+    else
+      # throw in self signed cert
+      echo "Generating self-signed SSL cert."
+      openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/ssl-cert-snakeoil.key -out /etc/ssl/certs/ssl-cert-snakeoil.pem -subj "/C=US/ST=Somewhere/L=Somewhere/O=BlueSky/OU=Development/CN=$SERVERFQDN"
+    fi
+    sed -i "s/CHANGETHIS/$serverFQDN/g" /etc/apache2/apache2.conf
+  fi
+  a2enmod ssl
+  a2ensite default-ssl
 fi
 a2enmod cgi
 sed -i "s/ServerAdmin webmaster@localhost/ServerAdmin $emailAlertAddress/g" /etc/apache2/sites-enabled/"$apacheConf".conf
@@ -188,7 +188,7 @@ head -n 5 /etc/apache2/sites-enabled/"$apacheConf".conf > /tmp/"$apacheConf".con
 #put this in
 echo "    ServerName $serverFQDN" >> /tmp/"$apacheConf".conf
 if [ "$USE_HTTP" -ne "1" ]; then
-	echo '        SSLProtocol All -SSLv2 -SSLv3' >> /tmp/"$apacheConf".conf
+  echo '        SSLProtocol All -SSLv2 -SSLv3' >> /tmp/"$apacheConf".conf
 fi
 #write the bottom half
 tail -n +6 /etc/apache2/sites-enabled/"$apacheConf".conf  >> /tmp/"$apacheConf".conf
@@ -197,17 +197,17 @@ mv /etc/apache2/sites-enabled/"$apacheConf".conf /tmp/"$apacheConf".conf.backup
 mv /tmp/"$apacheConf".conf /etc/apache2/sites-enabled/"$apacheConf".conf
 
 if [ "$USE_HTTP" -ne "1" ]; then
-	## setup port 80 redirect to 443
-	echo "<VirtualHost *:80>
-	Redirect permanent / https://$serverFQDN/
-	ServerName $serverFQDN" > /tmp/000-default.conf
-	tail -n +2 /etc/apache2/sites-enabled/000-default.conf  >> /tmp/000-default.conf
-	mv /etc/apache2/sites-enabled/000-default.conf /tmp/000-default.conf.backup
-	mv /tmp/000-default.conf /etc/apache2/sites-enabled/000-default.conf
+  ## setup port 80 redirect to 443
+  echo "<VirtualHost *:80>
+  Redirect permanent / https://$serverFQDN/
+  ServerName $serverFQDN" > /tmp/000-default.conf
+  tail -n +2 /etc/apache2/sites-enabled/000-default.conf  >> /tmp/000-default.conf
+  mv /etc/apache2/sites-enabled/000-default.conf /tmp/000-default.conf.backup
+  mv /tmp/000-default.conf /etc/apache2/sites-enabled/000-default.conf
 fi
 
 if [[ -z ${IN_DOCKER} ]]; then
-	service apache2 restart
+  service apache2 restart
 fi
 
 ## move web site to /var/www/html
@@ -228,7 +228,7 @@ chown www-data /usr/local/bin/BlueSky/Server/collector.php
 chmod 700 /usr/local/bin/BlueSky/Server/collector.php
 sed -i "s/CHANGETHIS/$mysqlCollectorPass/g" /usr/lib/cgi-bin/collector.php
 if [[ ${IN_DOCKER} ]]; then
-	sed -i "s/localhost/$MYSQLSERVER/g" /usr/lib/cgi-bin/collector.php
+  sed -i "s/localhost/$MYSQLSERVER/g" /usr/lib/cgi-bin/collector.php
 fi
 
 ## setup my.cnf
@@ -236,9 +236,9 @@ echo "[client]
 user = root
 password = $mysqlRootPass" > /var/local/my.cnf
 if [[ ${IN_DOCKER} ]]; then
-	echo "host = $MYSQLSERVER" >> /var/local/my.cnf
+  echo "host = $MYSQLSERVER" >> /var/local/my.cnf
 else
-	echo "host = 127.0.0.1" >> /var/local/my.cnf
+  echo "host = 127.0.0.1" >> /var/local/my.cnf
 fi
 chown admin:www-data /var/local/my.cnf
 chmod 640 /var/local/my.cnf
@@ -247,9 +247,9 @@ chmod 640 /var/local/my.cnf
 # test if database already exists
 dbExists=$(/usr/bin/mysql --defaults-file=/var/local/my.cnf -N -B -e "SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'BlueSky'" information_schema)
 if [[ -z "${dbExists}" ]]; then
-	# does not exist
-	/usr/bin/mysql --defaults-file=/var/local/my.cnf -N -B -e 'create database BlueSky;'
-	/usr/bin/mysql --defaults-file=/var/local/my.cnf BlueSky < /usr/local/bin/BlueSky/Server/myBlueSQL.sql
+  # does not exist
+  /usr/bin/mysql --defaults-file=/var/local/my.cnf -N -B -e 'create database BlueSky;'
+  /usr/bin/mysql --defaults-file=/var/local/my.cnf BlueSky < /usr/local/bin/BlueSky/Server/myBlueSQL.sql
 fi
 
 myCmd="/usr/bin/mysql --defaults-file=/var/local/my.cnf BlueSky -N -B -e"
@@ -257,21 +257,23 @@ myCmd="/usr/bin/mysql --defaults-file=/var/local/my.cnf BlueSky -N -B -e"
 ## setup credentials in /var/www/html/config.php
 sed -i "s/MYSQLROOT/$mysqlRootPass/g" /var/www/html/config.php
 if [[ ${IN_DOCKER} ]]; then
-	sed -i "s/localhost/$MYSQLSERVER/g" /var/www/html/config.php
+  sed -i "s/localhost/$MYSQLSERVER/g" /var/www/html/config.php
 fi
 
-## setup credentials in membership_users table
-myQry="update membership_users set passMD5=MD5('$webAdminPassword'),email='$emailAlertAddress' where memberID='admin'"
-$myCmd "$myQry"
+if [[ -z ${IN_DOCKER} || -z ${dbExists} ]]; then
+  ## setup credentials in membership_users table only if we are being run outside of docker OR the database was just created
+  myQry="update membership_users set passMD5=MD5('$webAdminPassword'),email='$emailAlertAddress' where memberID='admin'"
+  $myCmd "$myQry"
+fi
 
 ## set collector mysql perms
 # set variable to refer to what host(s) can connect to mysql
 mysqlHostSecurity="localhost"
 if [[ ${IN_DOCKER} ]]; then
-	mysqlHostSecurity="%"
-	# lets make sure the collector mysql user doesn't exist as we will be recreating it
-	myQry="drop user 'collector'@'$mysqlHostSecurity';"
-	$myCmd "$myQry"
+  mysqlHostSecurity="%"
+  # lets make sure the collector mysql user doesn't exist as we will be recreating it
+  myQry="drop user 'collector'@'$mysqlHostSecurity';"
+  $myCmd "$myQry"
 fi
 # create user
 myQry="create user 'collector'@'$mysqlHostSecurity' identified by '$mysqlCollectorPass';"
@@ -303,14 +305,14 @@ sed -i "s/SERVER/$serverFQDN/g" /usr/local/bin/BlueSky/Client/.ssh/config.disabl
 
 ## That's all folks!
 if [[ -z ${IN_DOCKER} ]]; then
-	echo "All set.  Please be sure to generate a CSR and/or install a verifiable SSL certificate"
-	echo "in Apache by editing SSL paths in /etc/apache2/sites-enabled/default-ssl.conf"
-	echo "BlueSky will not connect to servers with self-signed or invalid certificates."
-	echo "And configure /usr/local/bin/BlueSky/Server/emailHelper.sh with your preferred SMTP setup."
+  echo "All set.  Please be sure to generate a CSR and/or install a verifiable SSL certificate"
+  echo "in Apache by editing SSL paths in /etc/apache2/sites-enabled/default-ssl.conf"
+  echo "BlueSky will not connect to servers with self-signed or invalid certificates."
+  echo "And configure /usr/local/bin/BlueSky/Server/emailHelper.sh with your preferred SMTP setup."
 else
-	if [[ ${SMTP_SERVER} && ${SMTP_AUTH} && ${SMTP_PASS} ]]; then
-  	# enable email alerts
-  	mv /usr/local/bin/BlueSky/Server/emailHelper-dist.sh /usr/local/bin/BlueSky/Server/emailHelper.sh 2>/dev/null
+  if [[ ${SMTP_SERVER} && ${SMTP_AUTH} && ${SMTP_PASS} ]]; then
+    # enable email alerts
+    mv /usr/local/bin/BlueSky/Server/emailHelper-dist.sh /usr/local/bin/BlueSky/Server/emailHelper.sh 2>/dev/null
   fi
 fi
 exit 0
