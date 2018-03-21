@@ -260,9 +260,11 @@ if [[ ${IN_DOCKER} ]]; then
 	sed -i "s/localhost/$MYSQLSERVER/g" /var/www/html/config.php
 fi
 
-## setup credentials in membership_users table
-myQry="update membership_users set passMD5=MD5('$webAdminPassword'),email='$emailAlertAddress' where memberID='admin'"
-$myCmd "$myQry"
+if [[ -z ${IN_DOCKER} || -z ${dbExists} ]]; then
+	## setup credentials in membership_users table only if we are being run outside of docker OR the database was just created
+	myQry="update membership_users set passMD5=MD5('$webAdminPassword'),email='$emailAlertAddress' where memberID='admin'"
+	$myCmd "$myQry"
+fi
 
 ## set collector mysql perms
 # set variable to refer to what host(s) can connect to mysql
