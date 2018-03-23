@@ -241,12 +241,12 @@ maxretry = 2
 
 # http://linuxaria.com/howto/how-to-protect-apache-with-fail2ban
 
-#[apache-phpmyadmin]
-#enabled  = true
-#port     = http,https
-#filter   = apache-phpmyadmin
-#logpath  = /var/log/apache*/*error.log
-#maxretry = 3
+[apache-phpmyadmin]
+enabled  = true
+port     = http,https
+filter   = apache-phpmyadmin
+logpath  = /var/log/apache*/*error.log
+maxretry = 3
 
 # Ban attackers that try to use PHP's URL-fopen() functionality
 # through GET/POST variables. - Experimental, with more than a year
