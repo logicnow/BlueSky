@@ -43,26 +43,30 @@ function killShells {
     shellList=`ps -ax | grep ssh | grep 'bluesky\@' | awk '{ print $1 }'`
     for shellPid in $shellList; do
         kill -9 $shellPid
-        logMe "Killed stale shell on $shellPid" 
+        logMe "Killed stale shell on $shellPid"
     done
 }
 
 #if server.plist is not present, error and exit
 if [ ! -e "$ourHome/server.plist" ]; then
-	echo "server.plist is not installed. Please double-check your setup."
-	exit 2
+  echo "server.plist is not installed. Please double-check your setup."
+  exit 2
 fi
 
 #if BlueSky 1.5 is present, get rid of it
-if [ -e /Library/Mac-MSP/BlueSky/helper.sh ]; then
+if [[ -e /Library/Mac-MSP/BlueSky/helper.sh || ! -z $(pkgutil --pkgs | grep com.mac-msp.bluesky) ]]; then
   killShells
   killall autossh
   echo 'picardAlphaTango' > /Library/Mac-MSP/BlueSky/.getHelp
+  sleep 5
+  #lets really make sure the old bluesky is gone...
+  dscl . -delete /Users/mac-msp-bluesky
+  launchctl unload /Library/LaunchDaemons/com.mac-msp.bluesky.*.plist && rm -f /Library/LaunchDaemons/com.mac-msp.bluesky.*.plist
 fi
 
 if [ -e "$ourHome/.getHelp" ]; then
-	helpWithWhat=`cat "$ourHome/.getHelp"`
-	rm -f "$ourHome/.getHelp"
+  helpWithWhat=`cat "$ourHome/.getHelp"`
+  rm -f "$ourHome/.getHelp"
 fi
 
 # initiate self-destruct
@@ -106,13 +110,14 @@ if [ "$userCheck" == "" ]; then
     dscl . -create /Users/bluesky Password "*"
     defaults write /Library/Preferences/com.apple.loginwindow HiddenUsersList -array-add bluesky
     defaults write /Library/Preferences/com.apple.loginwindow Hide500Users -bool TRUE
-    chown -R bluesky "$ourHome" 
     dseditgroup -o edit -a bluesky -t user com.apple.access_ssh 2> /dev/null
     # kill any autossh and shells that may have belonged to the old user
     killShells
     # defaults may not be able to validate the serial number until cfprefsd restarts
     killall cfprefsd
 fi
+#ensure the permissions are correct on our home
+chown -R bluesky "$ourHome"
 
 #help me help you.  help me... help you.
 dseditgroup -o edit -a bluesky -t user com.apple.access_ssh 2> /dev/null
@@ -130,31 +135,31 @@ systemsetup -setremotelogin on &> /dev/null
 if [ "$helpWithWhat" == "fixPerms" ]; then
     logMe "Fixing permissions on our directory"
     chown -R bluesky "$ourHome"
-    defaults write /Library/Preferences/com.apple.loginwindow HiddenUsersList -array-add bluesky  
+    defaults write /Library/Preferences/com.apple.loginwindow HiddenUsersList -array-add bluesky
 fi
 
 #GSS API config lines mess up client connections in 10.12+
 gssCheck=`grep -e ^'GSSAPIKeyExchange' -e ^'GSSAPITrustDNS' -e ^'GSSAPIDelegateCredentials' /etc/ssh/ssh_config`
 if [ "$gssCheck" != "" ] && [ ${osVersion:-0} -gt 11 ]; then
-	grep -v ^'GSSAPIKeyExchange' /etc/ssh/ssh_config | grep -v ^'GSSAPITrustDNS' | grep -v ^'GSSAPIDelegateCredentials' > /tmp/ssh_config && mv /tmp/ssh_config /etc/ssh/ssh_config
+  grep -v ^'GSSAPIKeyExchange' /etc/ssh/ssh_config | grep -v ^'GSSAPITrustDNS' | grep -v ^'GSSAPIDelegateCredentials' > /tmp/ssh_config && mv /tmp/ssh_config /etc/ssh/ssh_config
 fi
 
 #sometimes bluesky user can't kill shells
 if [ "$helpWithWhat" == "contractKiller" ]; then
-	logMe "Helper was asked to kill connections"
+  logMe "Helper was asked to kill connections"
     killShells
 fi
 
 #workaround for bug that is creating empty settings file
 setCheck=`grep keytime "$ourHome/settings.plist"`
 if [ "$setCheck" == "" ]; then
-	logMe "Helper is resetting the settings plist"
-	rm -f "$ourHome/settings.plist"
-	/usr/libexec/PlistBuddy -c "Add :keytime integer 0" "$ourHome/settings.plist"
-	# commenting these out for 1.5, creation of variables should be more robust now
-#	/usr/libexec/PlistBuddy -c "Add :portcache integer -1" "$ourHome/settings.plist"
-#	/usr/libexec/PlistBuddy -c "Add :serial string 0" "$ourHome/settings.plist"
-	chown bluesky "$ourHome/settings.plist"
+  logMe "Helper is resetting the settings plist"
+  rm -f "$ourHome/settings.plist"
+  /usr/libexec/PlistBuddy -c "Add :keytime integer 0" "$ourHome/settings.plist"
+  # commenting these out for 1.5, creation of variables should be more robust now
+#  /usr/libexec/PlistBuddy -c "Add :portcache integer -1" "$ourHome/settings.plist"
+#  /usr/libexec/PlistBuddy -c "Add :serial string 0" "$ourHome/settings.plist"
+  chown bluesky "$ourHome/settings.plist"
 fi
 
 #make sure we stay executable - helps with initial install if someone isn't packaging
@@ -177,16 +182,16 @@ fi
 # if main launchd is not running, let's check perms and start it
 weLaunched=`launchctl list | grep com.solarwindsmsp.bluesky | wc -l`
 if [ ${weLaunched:-0} -lt 2 ]; then
-	logMe "LaunchDaemons don't appear to be loaded.  Fixing."
-	if [ ! -e /Library/LaunchDaemons/com.solarwindsmsp.bluesky.plist ]; then
-		cp /var/bluesky/com.solarwindsmsp.bluesky.plist /Library/LaunchDaemons/com.solarwindsmsp.bluesky.plist
-	fi
-	if [ ! -e /Library/LaunchDaemons/com.solarwindsmsp.bluesky.helper.plist ]; then
-		cp /var/bluesky/com.solarwindsmsp.bluesky.helper.plist /Library/LaunchDaemons/com.solarwindsmsp.bluesky.helper.plist
-	fi
-	chmod 644 /Library/LaunchDaemons/com.solarwindsmsp.bluesky.*
-	chown root:wheel /Library/LaunchDaemons/com.solarwindsmsp.bluesky.*
-	launchctl load -w /Library/LaunchDaemons/com.solarwindsmsp.bluesky.*
+  logMe "LaunchDaemons don't appear to be loaded.  Fixing."
+  if [ ! -e /Library/LaunchDaemons/com.solarwindsmsp.bluesky.plist ]; then
+    cp /var/bluesky/com.solarwindsmsp.bluesky.plist /Library/LaunchDaemons/com.solarwindsmsp.bluesky.plist
+  fi
+  if [ ! -e /Library/LaunchDaemons/com.solarwindsmsp.bluesky.helper.plist ]; then
+    cp /var/bluesky/com.solarwindsmsp.bluesky.helper.plist /Library/LaunchDaemons/com.solarwindsmsp.bluesky.helper.plist
+  fi
+  chmod 644 /Library/LaunchDaemons/com.solarwindsmsp.bluesky.*
+  chown root:wheel /Library/LaunchDaemons/com.solarwindsmsp.bluesky.*
+  launchctl load -w /Library/LaunchDaemons/com.solarwindsmsp.bluesky.*
 fi
 
 exit 0

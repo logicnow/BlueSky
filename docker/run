@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# wait for database
+if [[ ${MYSQLROOTPASS} ]]; then
+	mysqlRootPass=$MYSQLROOTPASS
+else
+	# lets check for the linked containers password
+	if [[ ${DB_ENV_MYSQL_ROOT_PASSWORD} ]]; then
+		mysqlRootPass=$DB_ENV_MYSQL_ROOT_PASSWORD
+	else
+		mysqlRootPass="admin"
+	fi
+fi
+
+COUNT=0
+while [ $COUNT -le 30 ]
+do
+	sleep 1;
+	COUNT=$((COUNT+1));
+
+  MYSQL_IS_RUNNING=`mysqladmin -h db -u root -p"${mysqlRootPass}" status 2>1 /dev/null | grep Uptime`
+
+  if [[ -z ${MYSQL_IS_RUNNING} ]]; then
+    if [ $COUNT -gt 30 ]; then
+      echo "We failed to connect to the database, exiting..."
+      exit 1;
+    fi
+    echo "Waiting for the database to start.  Attempt $COUNT..."
+  else
+    echo "Database is running..."
+    break
+  fi
+done
+
+# run bluesky server config
+/usr/local/bin/BlueSky/Server/server-config.sh
+
+# purge hanging sockets/pids
+rm -f /var/run/fail2ban/*
+
+# start it up
+exec supervisord -n -c /etc/supervisor/conf.d/supervisord.conf

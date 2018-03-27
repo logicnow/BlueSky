@@ -10,3 +10,7 @@ Apps are provided to connect you to remote Terminal (SSH), Screen Sharing (VNC),
 Since BlueSky from your client computers is an outgoing connection most SMB networks won’t block it. In enterprise environments, BlueSky can read the proxy configuration in system preferences and send the tunnel through a proxy server.
 
 Read more in the [Wiki](https://github.com/logicnow/BlueSky/wiki)
+
+## Docker Information
+
+Information regarding running BlueSky with docker can be found [in this README](https://github.com/sphen13/BlueSky/blob/docker/docker/README.md)
