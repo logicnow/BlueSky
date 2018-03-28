@@ -4,7 +4,7 @@ This is an attempt at getting BlueSky to run within docker.  This should allow i
 
 ### TL;DR
 
-We have a full example setup utilizing Caddy for automatic SSL cert generation [at this page](https://github.com/sphen13/BlueSky/blob/docker/docker/DOCKER_FULL_EXAMPLE.md).
+We have a full example setup utilizing Caddy for automatic SSL cert generation [at this page](https://github.com/logicnow/BlueSky/blob/master/docker/DOCKER_FULL_EXAMPLE.md).
 
 ### Environment variables
 

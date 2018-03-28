@@ -2,7 +2,7 @@
 
 This page shows an example setup consisting of several docker containers working together for easy deployment.
 
-The main documentation on how to use the bluesky container is in our main [README](../README.md)
+The main documentation on how to use the bluesky container is in our main [README](https://github.com/logicnow/BlueSky/blob/master/docker/README.md)
 
 ### Assumptions for this example
 
