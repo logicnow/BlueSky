@@ -13,4 +13,4 @@ Read more in the [Wiki](https://github.com/logicnow/BlueSky/wiki)
 
 ## Docker Information
 
-Information regarding running BlueSky with docker can be found [in this README](https://github.com/sphen13/BlueSky/blob/docker/docker/README.md)
+Information regarding running BlueSky with docker can be found [in this README](https://github.com/logicnow/BlueSky/blob/master/docker/README.md)
