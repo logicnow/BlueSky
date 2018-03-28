@@ -54,6 +54,10 @@ if myChoice is {button returned:"This Mac"} then
 	try
 		set hostEntry to do shell script "grep 'Host " & serverAddr & "' ~/.ssh/config; exit 0"
 		if hostEntry is "" then
+			do shell script "lastChar=$(tail -c 1 ~/.ssh/config)
+if [ \"$lastChar\" != \"\" ]; then
+	echo >> ~/.ssh/config
+fi"
 			do shell script "echo 'Host " & serverAddr & "' >> ~/.ssh/config"
 			do shell script "echo '      UseKeychain yes' >> ~/.ssh/config"
 		end if
