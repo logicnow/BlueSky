@@ -46,22 +46,25 @@ if [[ ${IN_DOCKER} ]]; then
 		ln -fs /certs/blueskyadmin.pub /usr/local/bin/BlueSky/Admin\ Tools/
 		ln -fs /certs/blueskyd.pub /usr/local/bin/BlueSky/Server/
 		ln -fs /certs/blueskyd /usr/local/bin/BlueSky/Server/
-		if [[ -f /certs/ssh_host_ed25519_key && -f /certs/ssh_host_ed25519_key.pub && -f /certs/ssh_host_rsa_key && -f /certs/ssh_host_rsa_key.pub ]]; then
-			# host keys exist
-			echo "Re-using host keys..."
-		else
-			# host keys not provided - lets make 'em
-			echo "Generating host keys..."
-			ssh-keygen -q -t rsa -N '' -f /certs/ssh_host_rsa_key -C localhost
-			ssh-keygen -q -t ed25519 -N '' -f /certs/ssh_host_ed25519_key -C localhost
-		fi
-		# link the host keys back
-		ln -fs /certs/ssh_host_rsa_key* /etc/ssh/
-		ln -fs /certs/ssh_host_ed25519_key* /etc/ssh/
 	else
 		echo "fresh docker container - lets rebuild keys..."
 		IN_DOCKER_FRESH=true
 	fi
+
+	# check whether we have host keys to reuse - otherwise generate them...
+	if [[ -f /certs/ssh_host_ed25519_key && -f /certs/ssh_host_ed25519_key.pub && -f /certs/ssh_host_rsa_key && -f /certs/ssh_host_rsa_key.pub ]]; then
+		# host keys exist
+		echo "Re-using host keys..."
+	else
+		# host keys not provided - lets make 'em
+		echo "Generating host keys..."
+		ssh-keygen -q -t rsa -N '' -f /certs/ssh_host_rsa_key -C localhost
+		ssh-keygen -q -t ed25519 -N '' -f /certs/ssh_host_ed25519_key -C localhost
+	fi
+	# link the host keys back
+	ln -fs /certs/ssh_host_rsa_key* /etc/ssh/
+	ln -fs /certs/ssh_host_ed25519_key* /etc/ssh/
+
 	# start ssh as we will need it for ssh-keyscan
 	/usr/sbin/sshd
 fi
