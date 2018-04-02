@@ -109,6 +109,7 @@ EOF
 docker run -d --name caddy \
   -p 80:80 \
   -p 443:443 \
+  -e ACME_AGREE=true \
   --link bluesky:bluesky \
   -v /var/docker/caddy/Caddyfile:/etc/Caddyfile \
   -v /var/docker/caddy:/root/.caddy \
