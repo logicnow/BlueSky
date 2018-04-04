@@ -137,8 +137,8 @@ fi
 myQry="select defaultemail from global"
 emailAlertAddress=`$myCmd "$myQry"`
 
-## setup credentials in /var/www/html/config.php
-sed -i "s/MYSQLROOT/$mysqlRootPass/g" /var/www/html/config.php
+## setup credentials in /usr/local/bin/BlueSky/Server/html/config.php
+sed -i "s/MYSQLROOT/$mysqlRootPass/g" /usr/local/bin/BlueSky/Server/html/config.php
 
 ## fail2ban conf - not making these active but updating our copies
 sed -i "s/SERVERFQDN/$serverFQDN/g" /usr/local/bin/BlueSky/Server/sendEmail-whois-lines.conf
