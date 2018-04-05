@@ -63,16 +63,16 @@ chown www-data /usr/local/bin/BlueSky/Server/keymaster.sh
 chown www-data /usr/local/bin/BlueSky/Server/processor.sh
 chmod 755 /usr/local/bin/BlueSky/Server/*.sh
 chown -R www-data /usr/local/bin/BlueSky/Server/html
-chown www-data /usr/local/bin/BlueSky/Server/collector.php 
-chmod 700 /usr/local/bin/BlueSky/Server/collector.php 
+chown www-data /usr/local/bin/BlueSky/Server/collector.php
+chmod 700 /usr/local/bin/BlueSky/Server/collector.php
 chown www-data /usr/local/bin/BlueSky/Server/blueskyd
 
 # sets auth.log so admin can read it
 chgrp admin /var/log/auth.log
 
 # sets my.cnf so admin can read it to populate connection log
-chmod 640 /var/local/my.cnf 
-chown admin /var/local/my.cnf 
+chmod 640 /var/local/my.cnf
+chown admin /var/local/my.cnf
 
 ## change the keys for 2.1
 # this can be removed in future versions, it's only for trailblazers who took arrows
@@ -137,8 +137,8 @@ fi
 myQry="select defaultemail from global"
 emailAlertAddress=`$myCmd "$myQry"`
 
-## setup credentials in /var/www/html/config.php
-sed -i "s/MYSQLROOT/$mysqlRootPass/g" /var/www/html/config.php
+## setup credentials in /usr/local/bin/BlueSky/Server/html/config.php
+sed -i "s/MYSQLROOT/$mysqlRootPass/g" /usr/local/bin/BlueSky/Server/html/config.php
 
 ## fail2ban conf - not making these active but updating our copies
 sed -i "s/SERVERFQDN/$serverFQDN/g" /usr/local/bin/BlueSky/Server/sendEmail-whois-lines.conf
