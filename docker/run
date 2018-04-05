@@ -38,5 +38,13 @@ done
 # purge hanging sockets/pids
 rm -f /var/run/fail2ban/*
 
+# create and set perms for www/.ssh
+mkdir /var/www/.ssh
+chown www-data /var/www/.ssh
+
+# open up perms for a couple keys (needed for web server)
+chmod +r /certs/blueskyadmin.key
+chmod +r /certs/blueskyclient.key
+
 # start it up
 exec supervisord -n -c /etc/supervisor/conf.d/supervisord.conf

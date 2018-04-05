@@ -31,6 +31,7 @@ RUN apt-get update && \
     rsyslog \
     fail2ban \
     iptables \
+    uuid-runtime \
     libnet-ssleay-perl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
