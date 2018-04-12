@@ -74,7 +74,8 @@ if [ "$helpWithWhat" == "selfdestruct" ]; then
     killShells
     rm -rf "$ourHome"
     dscl . -delete /Users/bluesky
-    launchctl unload /Library/LaunchDaemons/com.solarwindsmsp.bluesky.*.plist && rm -f /Library/LaunchDaemons/com.solarwindsmsp.bluesky.*.plist
+    launchctl unload /Library/LaunchDaemons/com.solarwindsmsp.bluesky* && rm -f /Library/LaunchDaemons/com.solarwindsmsp.bluesky*
+    pkgutil --forget com.solarwindsmsp.bluesky.pkg
     exit 0
 fi
 
