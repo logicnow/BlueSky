@@ -61,7 +61,11 @@ if [[ -e /Library/Mac-MSP/BlueSky/helper.sh || ! -z $(pkgutil --pkgs | grep com.
   sleep 5
   #lets really make sure the old bluesky is gone...
   dscl . -delete /Users/mac-msp-bluesky
-  launchctl unload /Library/LaunchDaemons/com.mac-msp.bluesky.*.plist && rm -f /Library/LaunchDaemons/com.mac-msp.bluesky.*.plist
+  launchctl unload /Library/LaunchDaemons/com.mac-msp.bluesky* && rm -f /Library/LaunchDaemons/com.mac-msp.bluesky*
+  #lets clear out old package receipts so we dont cause a phantom loop
+  for i in $(pkgutil --pkgs | grep com.mac-msp.bluesky); do
+    pkgutil --forget "$i"
+  done
 fi
 
 if [ -e "$ourHome/.getHelp" ]; then
