@@ -16,13 +16,13 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# This script is called by launchd every 5 minutes. 
-# Ensures that the connection to BlueSky is up and running, attempts repair if there is a problem. 
+# This script is called by launchd every 5 minutes.
+# Ensures that the connection to BlueSky is up and running, attempts repair if there is a problem.
 
 # Set this to a different location if you'd prefer it live somewhere else
 ourHome="/var/bluesky"
 
-bVer="2.1"
+bVer="2.2"
 
 # planting a debug flag runs bash in -x so you get all the output
 if [ -e "$ourHome/.debug" ]; then
@@ -65,7 +65,7 @@ function getAutoPid {
     fi
   else
     logMe "found autossh running on $autoPid"
-  fi  
+  fi
 }
 
 function killShells {
@@ -115,7 +115,7 @@ function startMeUp {
   timeStamp=`date "+%Y-%m-%d %H:%M:%S"`
   echo "$timeStamp BlueSky starting AutoSSH"
   # check for alternate SSH port
-  altPort=`/usr/libexec/PlistBuddy -c "Print :altport" "$ourHome/settings.plist"  2> /dev/null` 
+  altPort=`/usr/libexec/PlistBuddy -c "Print :altport" "$ourHome/settings.plist"  2> /dev/null`
   if [ "$altPort" == "" ]; then
     altPort=22
   else
@@ -180,7 +180,7 @@ function reKey {
   chmod 600 "$ourHome/.ssh/bluesky_client"
   chown bluesky "$ourHome/.ssh/bluesky_client.pub"
   chmod 600 "$ourHome/.ssh/bluesky_client.pub"
-  
+
   # server will require encryption
   pubKey=`openssl smime -encrypt -aes256 -in ~/.ssh/bluesky_client.pub -outform PEM "$ourHome/blueskyclient.pub"`
   if [ "$pubKey" == "" ]; then
@@ -195,7 +195,7 @@ function reKey {
     logMe "ERROR - upload of new public key failed. Exiting."
     exit 1
   fi
-  
+
   # get sharing name and Watchman Monitoring client group if present
   hostName=`scutil --get ComputerName`
   if [ "$hostName" == "" ]; then
@@ -205,7 +205,7 @@ function reKey {
   if [ "$wmCG" != "" ]; then
   	hostName="$wmCG - $hostName"
   fi
-  
+
   # upload info to get registered
   uploadResult=`curl $curlProxy -s -S -m 60 -1 --retry 4 --cacert "$ourHome/cacert.pem" -X POST -d "serialNum=$serialNum&actionStep=register&hostName=$hostName" https://$blueskyServer/cgi-bin/collector.php`
   curlExit=$?
@@ -214,7 +214,7 @@ function reKey {
   	exit 1
   fi
 
-  /usr/libexec/PlistBuddy -c "Add :keytime integer `date +%s`" "$ourHome/settings.plist" 2> /dev/null  
+  /usr/libexec/PlistBuddy -c "Add :keytime integer `date +%s`" "$ourHome/settings.plist" 2> /dev/null
   /usr/libexec/PlistBuddy -c "Set :keytime `date +%s`" "$ourHome/settings.plist"
 }
 
@@ -249,7 +249,7 @@ else
       fi
     fi
     #this may be a first run or first after a clone
-    /usr/libexec/PlistBuddy -c "Add :serial string $hwNum" "$ourHome/settings.plist" 2> /dev/null  
+    /usr/libexec/PlistBuddy -c "Add :serial string $hwNum" "$ourHome/settings.plist" 2> /dev/null
     /usr/libexec/PlistBuddy -c "Set :serial $hwNum" "$ourHome/settings.plist"
     serialNum="$hwNum"
     reKey
@@ -354,7 +354,7 @@ fi
 # Did port check pass?
 if [ "$port" == "" ]; then
 	# try running off cached copy
-	port=`/usr/libexec/PlistBuddy -c "Print :portcache" "$ourHome/settings.plist"  2> /dev/null` 
+	port=`/usr/libexec/PlistBuddy -c "Print :portcache" "$ourHome/settings.plist"  2> /dev/null`
 	if [ "$port" == "" ]; then
 		#no cached copy either, try rekey
 		reKey
@@ -366,13 +366,13 @@ if [ "$port" == "" ]; then
   		exit 2
   	else
   	  # plant port cache for next time
-  	    /usr/libexec/PlistBuddy -c "Add :portcache integer $port" "$ourHome/settings.plist" 2> /dev/null  
+  	    /usr/libexec/PlistBuddy -c "Add :portcache integer $port" "$ourHome/settings.plist" 2> /dev/null
     	/usr/libexec/PlistBuddy -c "Set :portcache $port" "$ourHome/settings.plist"
   	fi
 	fi
 else
 	# plant port cache for next time
-	/usr/libexec/PlistBuddy -c "Add :portcache integer $port" "$ourHome/settings.plist" 2> /dev/null  
+	/usr/libexec/PlistBuddy -c "Add :portcache integer $port" "$ourHome/settings.plist" 2> /dev/null
 	/usr/libexec/PlistBuddy -c "Set :portcache $port" "$ourHome/settings.plist"
 fi
 
@@ -380,7 +380,7 @@ sshport=$((22000 + port))
 vncport=$((24000 + port))
 monport=$((26000 + port))
 
-#greysky: 
+#greysky:
 manualProxy=`/usr/libexec/PlistBuddy -c "Print :proxy" "$ourHome/settings.plist"  2> /dev/null`
 if [ "$manualProxy" != "" ]; then
 	#if there is a manual proxy string in settings.plist, go with it
@@ -393,7 +393,7 @@ else
 	  confProxy=""
 	fi
 fi
-	
+
 if [ "$confProxy" != "" ] && [ ! -e "$ourHome/.ssh/config" ]; then
   #if proxy exists, and config is disabled, enable it, restart autossh
   sed "s/proxyaddress proxyport/$confProxy/g" "$ourHome/.ssh/config.disabled" > "$ourHome/.ssh/config"
