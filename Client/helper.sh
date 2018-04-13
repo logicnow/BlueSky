@@ -61,11 +61,11 @@ if [[ -e /Library/Mac-MSP/BlueSky/helper.sh || ! -z $(pkgutil --pkgs | grep com.
   sleep 5
   #lets really make sure the old bluesky is gone...
   dscl . -delete /Users/mac-msp-bluesky
-  launchctl unload /Library/LaunchDaemons/com.mac-msp.bluesky* && rm -f /Library/LaunchDaemons/com.mac-msp.bluesky*
   #lets clear out old package receipts so we dont cause a phantom loop
   for i in $(pkgutil --pkgs | grep com.mac-msp.bluesky); do
     pkgutil --forget "$i"
   done
+  launchctl unload /Library/LaunchDaemons/com.mac-msp.bluesky* && rm -f /Library/LaunchDaemons/com.mac-msp.bluesky*
 fi
 
 if [ -e "$ourHome/.getHelp" ]; then
@@ -78,8 +78,8 @@ if [ "$helpWithWhat" == "selfdestruct" ]; then
     killShells
     rm -rf "$ourHome"
     dscl . -delete /Users/bluesky
-    launchctl unload /Library/LaunchDaemons/com.solarwindsmsp.bluesky* && rm -f /Library/LaunchDaemons/com.solarwindsmsp.bluesky*
     pkgutil --forget com.solarwindsmsp.bluesky.pkg
+    launchctl unload /Library/LaunchDaemons/com.solarwindsmsp.bluesky* && rm -f /Library/LaunchDaemons/com.solarwindsmsp.bluesky*
     exit 0
 fi
 
