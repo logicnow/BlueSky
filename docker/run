@@ -47,7 +47,7 @@ chmod +r /certs/blueskyadmin.key
 chmod +r /certs/blueskyclient.key
 
 # set default bluesky user
-if [[ ! -z ${DEFAULT_USER} ]; then
+if [[ ! -z ${DEFAULT_USER} ]]; then
 	echo "${DEFAULT_USER}" > /usr/local/bin/BlueSky/Server/defaultLogin.txt
 fi
 
