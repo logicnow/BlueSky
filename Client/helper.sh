@@ -168,7 +168,7 @@ if [ "$setCheck" == "" ]; then
 fi
 
 #ensure proper version in settings file
-setCheck=`grep version "$ourHome/settings.plist"`
+setCheck=`/usr/libexec/PlistBuddy -c "Print :version" "$ourHome/settings.plist"`
 if [ "$setCheck" == "" ]; then
   logMe "Adding version to the settings plist"
   /usr/libexec/PlistBuddy -c "Add :version string $bVer" "$ourHome/settings.plist"
