@@ -26,6 +26,10 @@ webAdminPassword=""
 mysqlRootPass=""
 emailAlertAddress=""
 # --------- DO NOT EDIT BELOW ------------------------------------------------------
+if [[ -z ${USE_HTTP} ]]; then
+  USE_HTTP=0
+fi
+
 apacheConf="default-ssl"
 if [[ ${IN_DOCKER} ]]; then
   serverFQDN=$SERVERFQDN
