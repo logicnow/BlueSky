@@ -143,7 +143,7 @@ if [[ -z ${IN_DOCKER} ]]; then
   apt-get update
   sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password $mysqlRootPass"
   sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $mysqlRootPass"
-  apt-get -y install apache2 fail2ban mysql-server php-mysql php libapache2-mod-php php-mcrypt php-mysql inoticoming swaks curl
+  apt-get -y install apache2 fail2ban mysql-server php-mysql php libapache2-mod-php php-mysql inoticoming swaks curl
 fi
 
 ## setup user accounts/folders

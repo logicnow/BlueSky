@@ -21,7 +21,6 @@ RUN apt-get update && \
     php-mysql \
     php \
     libapache2-mod-php \
-    php-mcrypt \
     php-mysql \
     inoticoming \
     supervisor \
