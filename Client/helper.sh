@@ -167,6 +167,13 @@ if [ "$setCheck" == "" ]; then
   chown bluesky "$ourHome/settings.plist"
 fi
 
+#ensure proper version in settings file
+setCheck=`/usr/libexec/PlistBuddy -c "Print :version" "$ourHome/settings.plist"`
+if [ "$setCheck" == "" ]; then
+  logMe "Adding version to the settings plist"
+  /usr/libexec/PlistBuddy -c "Add :version string $bVer" "$ourHome/settings.plist"
+fi
+
 #make sure we stay executable - helps with initial install if someone isn't packaging
 chmod a+x /var/bluesky/helper.sh /var/bluesky/bluesky.sh /var/bluesky/autossh /var/bluesky/corkscrew /var/bluesky/proxy-config /var/bluesky/.ssh/wrapper.sh
 
