@@ -25,6 +25,7 @@ SMTP_SERVER | | SMTP Server (Required for email alerts) Port optional
 SMTP_AUTH | | SMTP auth user (Required for email alerts)
 SMTP_PASS | | SMTP auth pass (Required for email alerts)
 TIMEZONE | Etc/UTC | Local Timezone [Reference](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+DEFAULT_USER | | Default username bluesky uses when connecting to a client
 
 ### Docker volumes
 
