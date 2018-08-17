@@ -60,11 +60,11 @@ if [ "$compRec" == "" ]; then
   #fetch unique ID
   myQry="SELECT MIN(t1.blueskyid + 1) AS nextID FROM computers t1 LEFT JOIN computers t2 ON t1.blueskyid + 1 = t2.blueskyid WHERE t2.blueskyid IS NULL"
   bluId=`$myCmd "$myQry"`
-  
+
   if [ "$bluId" == "NULL" ] || [ "$bluId" == "" ]; then
   	bluId=1
   fi
-  
+
   #safety check
   if [ ${bluId:-0} -gt 1949 ]; then
     echo "ERROR: maximum limit reached"
@@ -137,7 +137,7 @@ fi
 myQry="select blueskyid from computers where serialnum='$serialNum'"
 myPort=`$myCmd "$myQry"`
 sshPort=$((22000 + myPort))
-testConn=`ssh -p $sshPort -o StrictHostKeyChecking=no -l bluesky -i /usr/local/bin/BlueSky/Server/blueskyd localhost "/usr/bin/defaults read /var/bluesky/settings serial"`
+testConn=`ssh -p $sshPort -o StrictHostKeyChecking=no -o ConnectTimeout=10 -l bluesky -i /usr/local/bin/BlueSky/Server/blueskyd localhost "/usr/bin/defaults read /var/bluesky/settings serial"`
 testExit=$?
 if [ $testExit -eq 0 ]; then
   if [ "$testConn" == "$serialNum" ]; then
@@ -146,7 +146,7 @@ if [ $testExit -eq 0 ]; then
     snMismatch
   fi
 else #either down or defaults is messed up, try using PlistBuddy
-	testConn2=`ssh -p $sshPort -o StrictHostKeyChecking=no -l bluesky -i /usr/local/bin/BlueSky/Server/blueskyd localhost "/usr/libexec/PlistBuddy -c 'Print serial' /var/bluesky/settings.plist"`
+	testConn2=`ssh -p $sshPort -o StrictHostKeyChecking=no -o ConnectTimeout=10 -l bluesky -i /usr/local/bin/BlueSky/Server/blueskyd localhost "/usr/libexec/PlistBuddy -c 'Print serial' /var/bluesky/settings.plist"`
 	testExit2=$?
 	if [ $testExit2 -eq 0 ]; then
 		if [ "$testConn2" == "$serialNum" ]; then
@@ -186,7 +186,7 @@ SSH bluesky://com.solarwindsmsp.bluesky.admin?blueSkyID=$myPort&user=$myUser&act
 VNC bluesky://com.solarwindsmsp.bluesky.admin?blueSkyID=$myPort&user=$myUser&action=vnc
 SCP bluesky://com.solarwindsmsp.bluesky.admin?blueSkyID=$myPort&user=$myUser&action=scp"
 	fi
-	
+
 	myQry="update computers set notify=0 where serialnum='$serialNum'"
 	$myCmd "$myQry"
 fi
