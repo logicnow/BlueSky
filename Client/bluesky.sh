@@ -130,7 +130,7 @@ function startMeUp {
   -c $prefCipher -m $msgAuth \
   $kexAlg \
   -o HostKeyAlgorithms=$keyAlg \
-  -nNT -R $sshport:localhost:$altPort -R $vncport:localhost:5900 -p 3122 \
+  -nNT -R $sshport:127.0.0.1:$altPort -R $vncport:127.0.0.1:5900 -p 3122 \
   $noRoam \
   -i "$ourHome/.ssh/bluesky_client" bluesky@$blueskyServer
   #echo "$!" > "$ourHome/autossh.pid"
