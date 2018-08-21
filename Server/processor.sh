@@ -155,14 +155,14 @@ else #either down or defaults is messed up, try using PlistBuddy
 			snMismatch
 		fi
 	else #it's down - lets find out why
-    if [[ $testConn2 = *"ssh_exchange_identification"* ]]; then
-      # PKI exchange issue for bluesky user - lets return OK to keep tunnel up.
-      echo "OK"
-      myQry="update computers set status='ERROR: tunnel issue TO client',datetime='$timeStamp' where serialnum='$serialNum'"
-    else
-  		echo "Cannot connect."
-  		myQry="update computers set status='ERROR: tunnel issue FROM client',datetime='$timeStamp' where serialnum='$serialNum'"
-    fi
+		if [[ $testConn2 = *"ssh_exchange_identification"* ]]; then
+			# PKI exchange issue for bluesky user - lets return OK to keep tunnel up.
+			echo "OK"
+			myQry="update computers set status='ERROR: tunnel issue TO client',datetime='$timeStamp' where serialnum='$serialNum'"
+		else
+			echo "Cannot connect."
+			myQry="update computers set status='ERROR: no tunnel established',datetime='$timeStamp' where serialnum='$serialNum'"
+		fi
 		$myCmd "$myQry"
 	fi
 fi
