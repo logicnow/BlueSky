@@ -146,7 +146,7 @@ if [ $testExit -eq 0 ]; then
     snMismatch
   fi
 else #either down or defaults is messed up, try using PlistBuddy
-	testConn2=`ssh -p $sshPort -o StrictHostKeyChecking=no -o ConnectTimeout=10 -l bluesky -i /usr/local/bin/BlueSky/Server/blueskyd localhost "/usr/libexec/PlistBuddy -c 'Print serial' /var/bluesky/settings.plist"`
+	testConn2=`ssh -p $sshPort -o StrictHostKeyChecking=no -o ConnectTimeout=10 -l bluesky -i /usr/local/bin/BlueSky/Server/blueskyd localhost "/usr/libexec/PlistBuddy -c 'Print serial' /var/bluesky/settings.plist" 2>&1`
 	testExit2=$?
 	if [ $testExit2 -eq 0 ]; then
 		if [ "$testConn2" == "$serialNum" ]; then
@@ -154,9 +154,15 @@ else #either down or defaults is messed up, try using PlistBuddy
 		else
 			snMismatch
 		fi
-	else #it's down
-		echo "Cannot connect."
-		myQry="update computers set status='ERROR: no tunnel established',datetime='$timeStamp' where serialnum='$serialNum'"
+	else #it's down - lets find out why
+		if [[ $testConn2 = *"ssh_exchange_identification"* ]]; then
+			# PKI exchange issue for bluesky user - lets return OK to keep tunnel up.
+			echo "OK"
+			myQry="update computers set status='ERROR: tunnel issue TO client',datetime='$timeStamp' where serialnum='$serialNum'"
+		else
+			echo "Cannot connect."
+			myQry="update computers set status='ERROR: no tunnel established',datetime='$timeStamp' where serialnum='$serialNum'"
+		fi
 		$myCmd "$myQry"
 	fi
 fi
