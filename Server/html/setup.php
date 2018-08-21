@@ -18,7 +18,7 @@
 			5. to show final success message, $_GET['finish']
 		below here, we determine which scenario is being called
 	*/
-	$submit = $test = $form = $finish = false; 
+	$submit = $test = $form = $finish = false;
 	(isset($_POST['submit'])   ? $submit = true :
 	(isset($_POST['test'])     ?   $test = true :
 	(isset($_GET['show-form']) ?   $form = true :
@@ -32,7 +32,7 @@
 	}
 
 	function isEmail($email){
-		if(preg_match('/^([*+!.&#$¦\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,4})$/i', $email)){
+		if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			return $email;
 		}else{
 			return FALSE;
@@ -242,7 +242,7 @@
 				?>
 					<div class="alert alert-warning alert-dismissable">
 						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-						
+
 					</div>
 				<?php
 			}
@@ -594,4 +594,3 @@
 	</style>
 
 <?php include_once("$curr_dir/footer.php"); ?>
-
