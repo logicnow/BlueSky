@@ -19,7 +19,7 @@
 # helper script performs privileged tasks for BlueSky, does initial client setup
 
 ourHome="/var/bluesky"
-bVer="2.2"
+bVer="2.3"
 
 if [ -e "$ourHome/.debug" ]; then
   set -x
