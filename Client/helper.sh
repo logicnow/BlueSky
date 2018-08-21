@@ -172,6 +172,9 @@ setCheck=`/usr/libexec/PlistBuddy -c "Print :version" "$ourHome/settings.plist"`
 if [ "$setCheck" == "" ]; then
   logMe "Adding version to the settings plist"
   /usr/libexec/PlistBuddy -c "Add :version string $bVer" "$ourHome/settings.plist"
+elif [ "$setCheck" != "$bVer" ]; then
+  logMe "Setting version in the settings plist"
+  /usr/libexec/PlistBuddy -c "Set :version $bVer" "$ourHome/settings.plist"
 fi
 
 #make sure we stay executable - helps with initial install if someone isn't packaging
