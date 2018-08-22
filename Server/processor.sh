@@ -137,7 +137,7 @@ fi
 myQry="select blueskyid from computers where serialnum='$serialNum'"
 myPort=`$myCmd "$myQry"`
 sshPort=$((22000 + myPort))
-testConn=`ssh -p $sshPort -o StrictHostKeyChecking=no -o ConnectTimeout=10 -l bluesky -i /usr/local/bin/BlueSky/Server/blueskyd localhost "/usr/bin/defaults read /var/bluesky/settings serial"`
+testConn=`ssh -p $sshPort -o StrictHostKeyChecking=no -o ConnectTimeout=10 -l bluesky -o BatchMode=yes -i /usr/local/bin/BlueSky/Server/blueskyd localhost "/usr/bin/defaults read /var/bluesky/settings serial"`
 testExit=$?
 if [ $testExit -eq 0 ]; then
   if [ "$testConn" == "$serialNum" ]; then
@@ -146,7 +146,7 @@ if [ $testExit -eq 0 ]; then
     snMismatch
   fi
 else #either down or defaults is messed up, try using PlistBuddy
-	testConn2=`ssh -p $sshPort -o StrictHostKeyChecking=no -o ConnectTimeout=10 -l bluesky -i /usr/local/bin/BlueSky/Server/blueskyd localhost "/usr/libexec/PlistBuddy -c 'Print serial' /var/bluesky/settings.plist" 2>&1`
+	testConn2=`ssh -p $sshPort -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes -l bluesky -i /usr/local/bin/BlueSky/Server/blueskyd localhost "/usr/libexec/PlistBuddy -c 'Print serial' /var/bluesky/settings.plist" 2>&1`
 	testExit2=$?
 	if [ $testExit2 -eq 0 ]; then
 		if [ "$testConn2" == "$serialNum" ]; then
@@ -159,6 +159,10 @@ else #either down or defaults is messed up, try using PlistBuddy
 			# PKI exchange issue for bluesky user - lets return OK to keep tunnel up.
 			echo "OK"
 			myQry="update computers set status='ERROR: tunnel issue TO client',datetime='$timeStamp' where serialnum='$serialNum'"
+		elif [[ $testConn2 = *"Permission denied"* ]]; then
+			# Most likely prompting for password auth - key issue - lets return OK to keep tunnel up.
+			echo "OK"
+			myQry="update computers set status='ERROR: cannot verify serial number',datetime='$timeStamp' where serialnum='$serialNum'"
 		else
 			echo "Cannot connect."
 			myQry="update computers set status='ERROR: no tunnel established',datetime='$timeStamp' where serialnum='$serialNum'"
