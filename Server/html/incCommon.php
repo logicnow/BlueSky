@@ -117,7 +117,7 @@
 	#########################################################
 	function getTableList($skip_authentication = false){
 		$arrAccessTables = array();
-		$arrTables = array(   
+		$arrTables = array(
 			'computers' => array('BlueSky Admin', '', 'table.gif'),
 			'global' => array('Global Settings', 'Set global options for all BlueSky installs or the server.', 'table.gif'),
 			'connections' => array('Connection Log', 'Tracks admin connection activity', 'table.gif')
@@ -186,7 +186,7 @@
 
 	#########################################################
 	function get_sql_fields($table_name){
-		$sql_fields = array(   
+		$sql_fields = array(
 			'computers' => "`computers`.`id` as 'id', `computers`.`blueskyid` as 'blueskyid', `computers`.`serialnum` as 'serialnum', `computers`.`hostname` as 'hostname', `computers`.`sshlink` as 'sshlink', `computers`.`vnclink` as 'vnclink', `computers`.`scplink` as 'scplink', `computers`.`username` as 'username', `computers`.`sharingname` as 'sharingname', `computers`.`gruntwork` as 'gruntwork', `computers`.`datetime` as 'datetime', `computers`.`status` as 'status', `computers`.`registered` as 'registered', `computers`.`notify` as 'notify', `computers`.`alert` as 'alert', `computers`.`email` as 'email', `computers`.`notes` as 'notes', `computers`.`selfdestruct` as 'selfdestruct', `computers`.`downup` as 'downup', `computers`.`timestamp` as 'timestamp'",
 			'global' => "`global`.`id` as 'id', `global`.`defaultemail` as 'defaultemail', `global`.`adminkeys` as 'adminkeys', `global`.`clickhere` as 'clickhere', `global`.`updateNames` as 'updateNames'",
 			'connections' => "`connections`.`id` as 'id', `connections`.`timestamp` as 'timestamp', `connections`.`sourceIP` as 'sourceIP', `connections`.`adminkey` as 'adminkey', `connections`.`targetPort` as 'targetPort', `connections`.`exitStatus` as 'exitStatus', `connections`.`startTime` as 'startTime', `connections`.`endTime` as 'endTime', `connections`.`notes` as 'notes'"
@@ -200,13 +200,13 @@
 	}
 	#########################################################
 	function get_sql_from($table_name, $skip_permissions = false){
-		$sql_from = array(   
+		$sql_from = array(
 			'computers' => "`computers` ",
 			'global' => "`global` ",
 			'connections' => "`connections` "
 		);
 
-		$pkey = array(   
+		$pkey = array(
 			'computers' => 'id',
 			'global' => 'id',
 			'connections' => 'id'
@@ -351,6 +351,7 @@
 						<a href="admin/pageHome.php" class="btn btn-danger navbar-btn visible-sm visible-md visible-lg"><i class="glyphicon glyphicon-cog"></i> <?php echo $Translation['admin area']; ?></a>
 						<a href="admin/pageHome.php" class="visible-xs btn btn-danger navbar-btn btn-lg"><i class="glyphicon glyphicon-cog"></i> <?php echo $Translation['admin area']; ?></a>
 					</ul>
+				<?php if(is_file(dirname(__FILE__) . '/hooks/agent-links.php')){ include(dirname(__FILE__).'/hooks/agent-links.php'); } ?>
 				<?php } ?>
 
 				<?php if(!$_GET['signIn'] && !$_GET['loginFailed']){ ?>
@@ -542,9 +543,9 @@
 					'admin' => ($adminConfig['adminUsername'] == $memberID ? true : false),
 					'email' => $row['email'],
 					'custom' => array(
-						$row['custom1'], 
-						$row['custom2'], 
-						$row['custom3'], 
+						$row['custom1'],
+						$row['custom2'],
+						$row['custom3'],
 						$row['custom4']
 					),
 					'banned' => ($row['isBanned'] ? true : false),
@@ -574,8 +575,8 @@
 			}
 
 			return $ret;
-		} 
-	} 
+		}
+	}
 	#########################################################
 	/**
 	* Loads a given view from the templates folder, passing the given data to it
@@ -652,7 +653,7 @@
 			$jsonFilterableData .= "\"{$row[0]}\":\"{$row[1]}\",";
 		}
 		$jsonFilterableData .= '}';
-		$jsonFilterableData = '{'.str_replace(',}', '}', $jsonFilterableData);     
+		$jsonFilterableData = '{'.str_replace(',}', '}', $jsonFilterableData);
 		$filterJS = "\nvar {$filterable}_data = $jsonFilterableData;";
 
 		foreach($filterersArray as $filterer){
@@ -969,4 +970,3 @@
 
 		return false;
 	}
-
