@@ -22,7 +22,7 @@
 # Set this to a different location if you'd prefer it live somewhere else
 ourHome="/var/bluesky"
 
-bVer="2.2"
+bVer="2.3"
 
 # planting a debug flag runs bash in -x so you get all the output
 if [ -e "$ourHome/.debug" ]; then
@@ -130,7 +130,7 @@ function startMeUp {
   -c $prefCipher -m $msgAuth \
   $kexAlg \
   -o HostKeyAlgorithms=$keyAlg \
-  -nNT -R $sshport:localhost:$altPort -R $vncport:localhost:5900 -p 3122 \
+  -nNT -R $sshport:127.0.0.1:$altPort -R $vncport:127.0.0.1:5900 -p 3122 \
   $noRoam \
   -i "$ourHome/.ssh/bluesky_client" bluesky@$blueskyServer
   #echo "$!" > "$ourHome/autossh.pid"
@@ -207,7 +207,7 @@ function reKey {
   fi
 
   # upload info to get registered
-  uploadResult=`curl $curlProxy -s -S -m 60 -1 --retry 4 --cacert "$ourHome/cacert.pem" -X POST -d "serialNum=$serialNum&actionStep=register&hostName=$hostName" https://$blueskyServer/cgi-bin/collector.php`
+  uploadResult=`curl $curlProxy -s -S -m 60 -1 --retry 4 --cacert "$ourHome/cacert.pem" -X POST --data-urlencode "serialNum=$serialNum" -d actionStep=register --data-urlencode "hostName=$hostName" https://$blueskyServer/cgi-bin/collector.php`
   curlExit=$?
   if [ "$uploadResult" != "Registered" ] || [ $curlExit -ne 0 ]; then
     logMe "ERROR - registration with server failed. Exiting."
@@ -334,7 +334,7 @@ fi
 serialMonster
 
 # Attempt to get our port
-port=`curl $curlProxy -s -S -m 60 -1 --retry 4 --cacert "$ourHome/cacert.pem" -X POST -d "serialNum=$serialNum&actionStep=port" https://$blueskyServer/cgi-bin/collector.php`
+port=`curl $curlProxy -s -S -m 60 -1 --retry 4 --cacert "$ourHome/cacert.pem" -X POST --data-urlencode "serialNum=$serialNum" -d actionStep=port https://$blueskyServer/cgi-bin/collector.php`
 curlExit=$?
 
 # Is the server up?
@@ -359,7 +359,7 @@ if [ "$port" == "" ]; then
 		#no cached copy either, try rekey
 		reKey
 		sleep 5
-    port=`curl $curlProxy -s -S -m 60 -1 --retry 4 --cacert "$ourHome/cacert.pem" -X POST -d "serialNum=$serialNum&actionStep=port" https://$blueskyServer/cgi-bin/collector.php`
+    port=`curl $curlProxy -s -S -m 60 -1 --retry 4 --cacert "$ourHome/cacert.pem" -X POST --data-urlencode "serialNum=$serialNum" -d actionStep=port https://$blueskyServer/cgi-bin/collector.php`
     curlExit=$?
 		if [ "$port" == "" ] || [ $curlExit -ne 0 ]; then
   		logMe "ERROR - cant reach server and have no port. Exiting."
@@ -417,14 +417,14 @@ if [ "$autoPid" == "" ]; then
 fi
 
 # ask server for the default username so we can pass on to Watchman
-defaultUser=`curl $curlProxy -s -S -m 60 -1 --retry 4 --cacert "$ourHome/cacert.pem" -X POST -d "serialNum=$serialNum&actionStep=user" https://$blueskyServer/cgi-bin/collector.php`
+defaultUser=`curl $curlProxy -s -S -m 60 -1 --retry 4 --cacert "$ourHome/cacert.pem" -X POST --data-urlencode "serialNum=$serialNum" -d actionStep=user https://$blueskyServer/cgi-bin/collector.php`
 if [ "$defaultUser" != "" ]; then
 	/usr/libexec/PlistBuddy -c "Add :defaultuser string $defaultUser" "$ourHome/settings.plist" 2> /dev/null
 	/usr/libexec/PlistBuddy -c "Set :defaultuser $defaultUser" "$ourHome/settings.plist"
 fi
 
 #autossh is running - check against server
-connStat=`curl $curlProxy -s -S -m 60 -1 --retry 4 --cacert "$ourHome/cacert.pem" -X POST -d "serialNum=$serialNum&actionStep=status" https://$blueskyServer/cgi-bin/collector.php`
+connStat=`curl $curlProxy -s -S -m 60 -1 --retry 4 --cacert "$ourHome/cacert.pem" -X POST --data-urlencode "serialNum=$serialNum" -d actionStep=status https://$blueskyServer/cgi-bin/collector.php`
 if [ "$connStat" != "OK" ]; then
   if [ "$connStat" == "selfdestruct" ]; then
     killShells
@@ -434,14 +434,14 @@ if [ "$connStat" != "OK" ]; then
   logMe "server says we are down. restarting tunnels. Server said $connStat"
   restartConnection
   sleep 5
-  connStatRetry=`curl $curlProxy -s -S -m 60 -1 --retry 4 --cacert "$ourHome/cacert.pem" -X POST -d "serialNum=$serialNum&actionStep=status" https://$blueskyServer/cgi-bin/collector.php`
+  connStatRetry=`curl $curlProxy -s -S -m 60 -1 --retry 4 --cacert "$ourHome/cacert.pem" -X POST --data-urlencode "serialNum=$serialNum" -d actionStep=status https://$blueskyServer/cgi-bin/collector.php`
   if [ "$connStatRetry" != "OK" ]; then
     logMe "server still says we are down. trying reKey. Server said $connStat"
     reKey
     sleep 5
     restartConnection
     sleep 5
-    connStatLastTry=`curl $curlProxy -s -S -m 60 -1 --retry 4 --cacert "$ourHome/cacert.pem" -X POST -d "serialNum=$serialNum&actionStep=status" https://$blueskyServer/cgi-bin/collector.php`
+    connStatLastTry=`curl $curlProxy -s -S -m 60 -1 --retry 4 --cacert "$ourHome/cacert.pem" -X POST --data-urlencode "serialNum=$serialNum" -d actionStep=status https://$blueskyServer/cgi-bin/collector.php`
     if [ "$connStatLastTry" != "OK" ]; then
       logMe "ERROR - server still says we are down. needs manual intervention. Server said $connStat"
       exit 1
