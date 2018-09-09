@@ -162,6 +162,8 @@ chown www-data /home/admin/newkeys
 chown www-data /home/bluesky/newkeys
 chown -R admin /home/admin/.ssh
 chown -R bluesky /home/bluesky/.ssh
+chmod -R go-rwx /home/admin/.ssh
+chmod -R go-rwx /home/bluesky/.ssh
 # sets auth.log so admin can read it
 touch /var/log/auth.log
 chgrp admin /var/log/auth.log
