@@ -37,20 +37,6 @@ fi
 
 # do some extra checks to see if we are in docker and what files we have
 if [[ ${IN_DOCKER} ]]; then
-	if [ "$(find /certs -maxdepth 1 -type f -not -path '*/\.*')" ]; then
-		# fixup files
-		echo "Putting the provided ssh keys in place..."
-		ln -fs /certs/blueskyclient.key /usr/local/bin/BlueSky/Server/
-		ln -fs /certs/blueskyclient.pub /usr/local/bin/BlueSky/Client/
-		ln -fs /certs/blueskyadmin.key /usr/local/bin/BlueSky/Server/
-		ln -fs /certs/blueskyadmin.pub /usr/local/bin/BlueSky/Admin\ Tools/
-		ln -fs /certs/blueskyd.pub /usr/local/bin/BlueSky/Server/
-		ln -fs /certs/blueskyd /usr/local/bin/BlueSky/Server/
-	else
-		echo "fresh docker container - lets rebuild keys..."
-		IN_DOCKER_FRESH=true
-	fi
-
 	# check whether we have host keys to reuse - otherwise generate them...
 	if [[ -f /certs/ssh_host_ed25519_key && -f /certs/ssh_host_ed25519_key.pub && -f /certs/ssh_host_rsa_key && -f /certs/ssh_host_rsa_key.pub ]]; then
 		# host keys exist
@@ -69,7 +55,7 @@ if [[ ${IN_DOCKER} ]]; then
 	/usr/sbin/sshd
 fi
 
-# safety check if these files are there
+# safety check if these files are there - ignore if in docker
 if [ -e /usr/local/bin/BlueSky/Server/blueskyd ] && [ "$reKey" == "" ] && [[ -z ${IN_DOCKER} ]]; then
 	echo "This server has already been configured.  Please use --client or --admin to re-key the client apps."
 	echo "If you are trying to set up the server again, please delete /usr/local/bin/BlueSky/Server/blueskyd* and try again."
@@ -81,11 +67,14 @@ if [ "$reKey" != "--admin" ]; then
 	if [[ -z ${IN_DOCKER} ]]; then
 		openssl req -x509 -nodes -days 100000 -newkey rsa:2048 -keyout /usr/local/bin/BlueSky/Server/blueskyclient.key -out /usr/local/bin/BlueSky/Client/blueskyclient.pub -subj '/'
 	else
-		if [ "$IN_DOCKER_FRESH" == true ]; then
+		# in docker: check to see if we are given existing key - create new one if not
+		if [ ! -e /certs/blueskyclient.key ] || [ ! -e /certs/blueskyclient.pub ]; then
+			echo "Creating blueskyclient key pair..."
 			openssl req -x509 -nodes -days 100000 -newkey rsa:2048 -keyout /certs/blueskyclient.key -out /certs/blueskyclient.pub -subj '/'
-			ln -s /certs/blueskyclient.key /usr/local/bin/BlueSky/Server/
-			ln -s /certs/blueskyclient.pub /usr/local/bin/BlueSky/Client/
 		fi
+		# link keys to correct location
+		ln -fs /certs/blueskyclient.key /usr/local/bin/BlueSky/Server/
+		ln -fs /certs/blueskyclient.pub /usr/local/bin/BlueSky/Client/
 	fi
 fi
 
@@ -94,11 +83,14 @@ if [ "$reKey" != "--client" ]; then
 	if [[ -z ${IN_DOCKER} ]]; then
 		openssl req -x509 -nodes -days 100000 -newkey rsa:2048 -keyout /usr/local/bin/BlueSky/Server/blueskyadmin.key -out /usr/local/bin/BlueSky/Admin\ Tools/blueskyadmin.pub -subj '/'
 	else
-		if [ "$IN_DOCKER_FRESH" == true ]; then
+		# in docker: check to see if we are given existing key - create new one if not
+		if [ ! -e /certs/blueskyadmin.key ] || [ ! -e /certs/blueskyadmin.pub ]; then
+			echo "Creating blueskyadmin key pair..."
 			openssl req -x509 -nodes -days 100000 -newkey rsa:2048 -keyout /certs/blueskyadmin.key -out /certs/blueskyadmin.pub -subj '/'
-			ln -s /certs/blueskyadmin.key /usr/local/bin/BlueSky/Server/
-			ln -s /certs/blueskyadmin.pub /usr/local/bin/BlueSky/Admin\ Tools/
 		fi
+		# link keys to correct location
+		ln -fs /certs/blueskyadmin.key /usr/local/bin/BlueSky/Server/
+		ln -fs /certs/blueskyadmin.pub /usr/local/bin/BlueSky/Admin\ Tools/
 	fi
 fi
 
@@ -109,11 +101,14 @@ if [ "$reKey" == "" ]; then
 	if [[ -z ${IN_DOCKER} ]]; then
 		ssh-keygen -q -t rsa -N '' -f /usr/local/bin/BlueSky/Server/blueskyd -C "$hostName"
 	else
-		if [ "$IN_DOCKER_FRESH" == true ]; then
+		# in docker: check to see if we are given existing key - create new one if not
+		if [ ! -e /certs/blueskyd ] || [ ! -e /certs/blueskyd.pub ]; then
+			echo "Creating blueskyd key pair..."
 			ssh-keygen -q -t rsa -N '' -f /certs/blueskyd -C "$hostName"
-			ln -s /certs/blueskyd.pub /usr/local/bin/BlueSky/Server/
-			ln -s /certs/blueskyd /usr/local/bin/BlueSky/Server/
 		fi
+		# link keys to correct location
+		ln -fs /certs/blueskyd.pub /usr/local/bin/BlueSky/Server/
+		ln -fs /certs/blueskyd /usr/local/bin/BlueSky/Server/
 	fi
 	chown www-data /usr/local/bin/BlueSky/Server/blueskyd
 	echo command=\"/var/bluesky/.ssh/wrapper.sh\",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty `cat /usr/local/bin/BlueSky/Server/blueskyd.pub` > /usr/local/bin/BlueSky/Client/.ssh/authorized_keys
