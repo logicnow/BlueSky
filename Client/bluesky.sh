@@ -323,11 +323,23 @@ while [ "$activeNets" == "" ]; do
 done
 
 # get proxy info from system preferences
-proxyInfo=`"$ourHome/proxy-config" -s`
-if [ "$proxyInfo" != "" ]; then
-  curlProxy="-x $proxyInfo"
+# Detect active network service for active route
+routeServiceGUID=$(printf "open\nget State:/Network/Global/IPv4\nd.show" | scutil | grep "PrimaryService" | awk '{print $3}')
+routeServiceName=$(printf "open\nget Setup:/Network/Service/$routeServiceGUID\nd.show" | scutil | grep "UserDefinedName" | awk -F': ' '{print $2}')
+# Get details on proxy settings. This can take some time so lets only ask the system once.
+proxyDetails=$(networksetup -getsecurewebproxy "$routeServiceName")
+# Are the proxy settings enabled?
+if [[ $(echo "$proxyDetails" | grep ^'Enabled: Yes') ]]; then
+	# It is enabled, lets read the data
+	proxyHostName=$(echo "$proxyDetails" | grep ^'Server:' | awk -F ': ' '{print $NF}')
+	proxyPort=$(echo "$proxyDetails" | grep ^'Port:' | awk -F ': ' '{print $NF}')
+	# sanity check, did we get those? A blank field for port in the GUI gives us an output string of "0", which is equally bad as null
+	if [[ -n $proxyHostName ]] && [[ -n $proxyPort ]] && [[ $proxyPort -ne 0 ]]; then
+		curlProxy="https://$proxyHostName:$proxyPort/"
+	fi
 else
-  curlProxy=""
+	# either proxy settings are off or we didn't get everything
+	curlProxy=''
 fi
 
 # get serial number
