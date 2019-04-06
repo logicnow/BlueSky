@@ -178,7 +178,7 @@ elif [ "$setCheck" != "$bVer" ]; then
 fi
 
 #make sure we stay executable - helps with initial install if someone isn't packaging
-chmod a+x /var/bluesky/helper.sh /var/bluesky/bluesky.sh /var/bluesky/autossh /var/bluesky/corkscrew /var/bluesky/proxy-config /var/bluesky/.ssh/wrapper.sh
+chmod a+x /var/bluesky/helper.sh /var/bluesky/bluesky.sh /var/bluesky/autossh /var/bluesky/corkscrew /var/bluesky/.ssh/wrapper.sh
 
 # babysit the bluesky process
 prevPid=`/usr/libexec/PlistBuddy -c "Print :pid" "$ourHome/settings.plist"  2> /dev/null`
