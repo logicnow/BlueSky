@@ -335,7 +335,7 @@ if [[ $(echo "$proxyDetails" | grep ^'Enabled: Yes') ]]; then
 	proxyPort=$(echo "$proxyDetails" | grep ^'Port:' | awk -F ': ' '{print $NF}')
 	# sanity check, did we get those? A blank field for port in the GUI gives us an output string of "0", which is equally bad as null
 	if [[ -n $proxyHostName ]] && [[ -n $proxyPort ]] && [[ $proxyPort -ne 0 ]]; then
-		curlProxy="https://$proxyHostName:$proxyPort/"
+		curlProxy="http://$proxyHostName:$proxyPort/"
 	fi
 else
 	# either proxy settings are off or we didn't get everything
