@@ -127,6 +127,7 @@ chown -R bluesky "$ourHome"
 #help me help you.  help me... help you.
 dseditgroup -o edit -a bluesky -t user com.apple.access_ssh 2> /dev/null
 systemsetup -setremotelogin on &> /dev/null
+/bin/launchctl load -w /System/Library/LaunchDaemons/ssh.plist &> /dev/null
 
 # commenting out on 1.12
 # re-intro when we can test a more reliable method of determining a VNC server
