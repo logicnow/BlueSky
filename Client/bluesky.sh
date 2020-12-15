@@ -122,7 +122,7 @@ function startMeUp {
     logMe "SSH port is set to $altPort per settings"
   fi
   # is this 10.6 which doesn't support UseRoaming or 10.12+ which doesn't need the flag?
-  if [ "$osVersion" != "6" ] && [ ${osVersion:-0} -lt 12 ]; then
+  if [ ${osVersionMajor:-0} -eq 10 ] && [ "$osVersionMinor" != "6" ] && [ ${osVersionMinor:-0} -lt 12 ]; then
     noRoam="-o UseRoaming=no"
   fi
   ## main command right here
@@ -282,10 +282,11 @@ fi
 
 # get the version of the OS so we can ensure compatiblity
 osRaw=`sw_vers -productVersion`
-osVersion=`echo "$osRaw" | awk -F . '{ print $2 }'`
+osVersionMajor=`echo "$osRaw" | awk -F . '{ print $1 }'`
+osVersionMinor=`echo "$osRaw" | awk -F . '{ print $2 }'`
 
 # select all of our algorithms - treating OS X 10.10 and below as insecure, defaulting to secure
-if [ ${osVersion:-0} -lt 11 ] && [ ${osVersion:-0} -ne 0 ]; then
+if [ ${osVersionMajor:-0} -eq 10 ] && [ ${osVersionMinor:-0} -lt 11 ] && [ ${osVersionMinor:-0} -ne 0 ]; then
   keyAlg="ssh-rsa"
   serverKey="serverkeyrsa"
   prefCipher="aes256-ctr"

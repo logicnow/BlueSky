@@ -85,7 +85,8 @@ fi
 
 # get the version of the OS so we can ensure compatiblity
 osRaw=`sw_vers -productVersion`
-osVersion=`echo "$osRaw" | awk -F . '{ print $2 }'`
+osVersionMajor=`echo "$osRaw" | awk -F . '{ print $1 }'`
+osVersionMinor=`echo "$osRaw" | awk -F . '{ print $2 }'`
 
 #check if user exists and create if necessary
 userCheck=`dscl . -read /Users/bluesky RealName`
@@ -127,6 +128,11 @@ chown -R bluesky "$ourHome"
 #help me help you.  help me... help you.
 dseditgroup -o edit -a bluesky -t user com.apple.access_ssh 2> /dev/null
 systemsetup -setremotelogin on &> /dev/null
+if [ ${osVersionMajor:-10} -eq 10 && ${osVersionMinor} -lt 15 ]; then
+  systemsetup -setremotelogin on &> /dev/null
+else
+  launchctl load -w /System/Library/LaunchDaemons/ssh.plist
+fi
 
 # commenting out on 1.12
 # re-intro when we can test a more reliable method of determining a VNC server
@@ -145,7 +151,7 @@ fi
 
 #GSS API config lines mess up client connections in 10.12+
 gssCheck=`grep -e ^'GSSAPIKeyExchange' -e ^'GSSAPITrustDNS' -e ^'GSSAPIDelegateCredentials' /etc/ssh/ssh_config`
-if [ "$gssCheck" != "" ] && [ ${osVersion:-0} -gt 11 ]; then
+if [ "$gssCheck" != "" ] && ( ([ ${osVersionMajor:-10} -eq 10 ] && [ ${osVersionMinor:-0} -gt 11 ]) || [ ${osVersionMajor:-10} -gt 10 ]); then
   grep -v ^'GSSAPIKeyExchange' /etc/ssh/ssh_config | grep -v ^'GSSAPITrustDNS' | grep -v ^'GSSAPIDelegateCredentials' > /tmp/ssh_config && mv /tmp/ssh_config /etc/ssh/ssh_config
 fi
 
