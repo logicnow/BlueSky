@@ -9,7 +9,7 @@ ENV IN_DOCKER=1 \
     EMAILALERT=root@localhost \
     LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
-    BLUESKY_VERSION=2.3.1
+    BLUESKY_VERSION=2.3.2
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y apache2 \
